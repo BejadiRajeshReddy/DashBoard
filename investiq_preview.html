@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InvestIQ — AI-Powered Equity Research</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --panel: #111827;
+      --panel-2: #161e2e;
+      --border: #1f2937;
+      --text: #e5e7eb;
+      --text-dim: #94a3b8;
+      --accent: #6366f1;
+    }
+    html, body { background: var(--bg); color: var(--text); }
+    body { font-family: 'Inter', sans-serif; font-feature-settings: 'cv02','cv03','cv04','cv11'; }
+    .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    .nav-item.active { background: rgba(99,102,241,.10); color: #a5b4fc; border-left-color: #6366f1; }
+    .nav-item { border-left: 2px solid transparent; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .tab-btn.active { background: rgba(99,102,241,.12); color: #c7d2fe; border-color: #6366f1; }
+    .agent-tab.active { background: rgba(99,102,241,.15); color:#e0e7ff; border-color: rgba(99,102,241,.5); }
+    .grid-bg { background-image: radial-gradient(circle at 1px 1px, #1f2937 1px, transparent 0); background-size: 24px 24px; }
+    .severity-high { color: #f87171; background: rgba(239,68,68,.10); border: 1px solid rgba(239,68,68,.30); }
+    .severity-med  { color: #fbbf24; background: rgba(245,158,11,.10); border: 1px solid rgba(245,158,11,.30); }
+    .severity-low  { color: #60a5fa; background: rgba(59,130,246,.10); border: 1px solid rgba(59,130,246,.30); }
+    .chip { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .5rem; border-radius:9999px; font-size:11px; font-weight:500; }
+    details summary::-webkit-details-marker { display:none; }
+    details summary { cursor: pointer; list-style: none; }
+    .marquee { animation: marquee 60s linear infinite; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  </style>
+</head>
+<body>
+<div class="flex h-screen overflow-hidden">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="w-60 bg-[#070b12] border-r border-gray-800 flex flex-col flex-shrink-0">
+    <div class="px-5 py-4 border-b border-gray-800 flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-900/40">
+        <i data-lucide="trending-up" class="w-5 h-5 text-white"></i>
+      </div>
+      <div>
+        <div class="font-bold text-[15px] leading-tight">InvestIQ</div>
+        <div class="text-[10px] text-gray-500 uppercase tracking-wider">Equity Research</div>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-3 text-sm">
+      <div class="px-5 mb-2 text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Workspace</div>
+      <a href="#" data-section="dashboard" class="nav-item active flex items-center gap-3 px-5 py-2 text-gray-300 hover:bg-gray-800/40">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+      </a>
+      <a href="#" data-section="companies" class="nav-item flex items-center gap-3 px-5 py-2 text-gray-300 hover:bg-gray-800/40">
+        <i data-lucide="building-2" class="w-4 h-4"></i> Companies
+      </a>
+      <a href="#" data-section="company-detail" class="nav-item flex items-center gap-3 px-5 py-2 text-gray-300 hover:bg-gray-800/40">
+        <i data-lucide="microscope" class="w-4 h-4"></i> Company Detail
+        <span class="ml-auto chip bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">RELIANCE</span>
+      </a>
+      <a href="#" data-section="market-data" class="nav-item flex items-center gap-3 px-5 py-2 text-gray-300 hover:bg-gray-800/40">
+        <i data-lucide="line-chart" class="w-4 h-4"></i> Market Data
+      </a>
+
+      <div class="px-5 mt-5 mb-2 text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Documents</div>
+      <a href="#" data-section="concalls" class="nav-item flex items-center gap-3 px-5 py-2 text-gray-300 hover:bg-gray-800/40">
+        <i data-lucide="file-text" class="w-4 h-4"></i> Concalls & Filings
+        <span class="ml-auto text-[10px] text-gray-500 mono">2,841</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-3 px-5 py-2 text-gray-500 hover:bg-gray-800/40">
+        <i data-lucide="file-search" class="w-4 h-4"></i> Transcripts
+      </a>
+
+      <div class="px-5 mt-5 mb-2 text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Admin</div>
+      <a href="#" data-section="data-health" class="nav-item flex items-center gap-3 px-5 py-2 text-gray-300 hover:bg-gray-800/40">
+        <i data-lucide="activity" class="w-4 h-4"></i> Data Health
+        <span class="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-3 px-5 py-2 text-gray-500 hover:bg-gray-800/40">
+        <i data-lucide="database" class="w-4 h-4"></i> Ingestion
+      </a>
+    </nav>
+
+    <div class="border-t border-gray-800 p-3 flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-semibold text-xs">RB</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-[13px] font-medium truncate">Rajesh Bejadi</div>
+        <div class="text-[11px] text-gray-500 truncate">Senior Analyst · L3</div>
+      </div>
+      <button class="text-gray-500 hover:text-gray-300"><i data-lucide="settings" class="w-4 h-4"></i></button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Top bar -->
+    <header class="h-14 border-b border-gray-800 flex items-center px-5 gap-4 bg-[#0a0e17]/90 backdrop-blur">
+      <div class="flex-1 max-w-md relative">
+        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i>
+        <input type="text" placeholder="Search tickers, news, agents…" class="w-full bg-gray-900/60 border border-gray-800 rounded-lg pl-10 pr-12 py-2 text-sm focus:outline-none focus:border-indigo-500/50 transition" />
+        <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-500 bg-gray-800 border border-gray-700 rounded px-1.5 py-0.5 mono">⌘K</kbd>
+      </div>
+
+      <!-- Live tape -->
+      <div class="hidden xl:flex items-center gap-5 mono text-xs flex-1 overflow-hidden">
+        <div class="flex items-center gap-1.5"><span class="text-gray-500">NIFTY</span><span class="text-emerald-400">23,847.50</span><span class="text-emerald-400/80 text-[10px]">+0.62%</span></div>
+        <div class="flex items-center gap-1.5"><span class="text-gray-500">SENSEX</span><span class="text-emerald-400">78,523.12</span><span class="text-emerald-400/80 text-[10px]">+0.55%</span></div>
+        <div class="flex items-center gap-1.5"><span class="text-gray-500">BANK</span><span class="text-red-400">51,204.30</span><span class="text-red-400/80 text-[10px]">-0.31%</span></div>
+        <div class="flex items-center gap-1.5"><span class="text-gray-500">USD/INR</span><span class="text-amber-400">83.42</span></div>
+        <div class="flex items-center gap-1.5"><span class="text-gray-500">10Y G-SEC</span><span class="text-gray-200">7.05%</span></div>
+      </div>
+
+      <button class="text-xs text-gray-400 hover:text-white border border-gray-800 rounded-lg px-3 py-1.5 flex items-center gap-2">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400"></i> Ask InvestIQ
+      </button>
+      <button class="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-800/60 transition">
+        <i data-lucide="bell" class="w-4 h-4 text-gray-400"></i>
+        <span class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+      </button>
+    </header>
+
+    <main class="flex-1 overflow-y-auto" id="main-scroll">
+      <!-- ============================ DASHBOARD ============================ -->
+      <section id="section-dashboard" class="section active">
+        <!-- Greeting banner -->
+        <div class="border-b border-gray-800 grid-bg">
+          <div class="px-6 py-6 flex items-start justify-between flex-wrap gap-4">
+            <div>
+              <div class="text-[11px] text-indigo-400 uppercase tracking-wider font-semibold mb-1">Wednesday · 03 Jun 2026 · 14:32 IST</div>
+              <h1 class="text-2xl font-bold">Good afternoon, Rajesh 👋</h1>
+              <p class="text-sm text-gray-400 mt-1">3 new anomalies detected overnight · 2 research cycles awaiting your review</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="text-xs border border-gray-800 rounded-lg px-3 py-2 flex items-center gap-1.5 hover:bg-gray-800/60"><i data-lucide="download" class="w-3.5 h-3.5"></i> Export</button>
+              <button class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-3 py-2 flex items-center gap-1.5"><i data-lucide="plus" class="w-3.5 h-3.5"></i> New Research Cycle</button>
+            </div>
+          </div>
+
+          <!-- Stat cards -->
+          <div class="px-6 pb-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-4 hover:border-indigo-500/40 transition">
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center"><i data-lucide="building-2" class="w-4 h-4 text-indigo-400"></i></div>
+                <span class="text-[10px] text-emerald-400 font-semibold">+12 this week</span>
+              </div>
+              <div class="mono text-2xl font-bold">487</div>
+              <div class="text-xs text-gray-500 mt-0.5">Covered Companies</div>
+            </div>
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-4 hover:border-indigo-500/40 transition">
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i></div>
+                <span class="text-[10px] text-gray-500 font-semibold">FY26 Q4 closed</span>
+              </div>
+              <div class="mono text-2xl font-bold">12,318</div>
+              <div class="text-xs text-gray-500 mt-0.5">Financial Reports</div>
+            </div>
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-4 hover:border-indigo-500/40 transition">
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 text-purple-400"></i></div>
+                <span class="text-[10px] text-purple-300 font-semibold">+84 today</span>
+              </div>
+              <div class="mono text-2xl font-bold">2,841</div>
+              <div class="text-xs text-gray-500 mt-0.5">Concall PDFs</div>
+            </div>
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-4 hover:border-indigo-500/40 transition">
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center"><i data-lucide="newspaper" class="w-4 h-4 text-amber-400"></i></div>
+                <span class="text-[10px] text-amber-300 font-semibold flex items-center gap-0.5"><span class="w-1 h-1 rounded-full bg-amber-400 animate-pulse"></span> Live</span>
+              </div>
+              <div class="mono text-2xl font-bold">38,572</div>
+              <div class="text-xs text-gray-500 mt-0.5">News Articles · 30d</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Macro strip -->
+        <div class="px-6 pt-5">
+          <div class="flex items-baseline justify-between mb-3">
+            <h2 class="text-sm font-semibold tracking-wide uppercase text-gray-400 flex items-center gap-2"><i data-lucide="globe" class="w-4 h-4"></i> Macro Pulse · India</h2>
+            <a href="#" class="text-xs text-indigo-400 hover:underline">View all indicators →</a>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <!-- RBI Repo -->
+            <div class="rounded-lg border border-gray-800 bg-[#111827] p-3">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">RBI Repo Rate</div>
+              <div class="mono text-lg font-semibold mt-1">6.50<span class="text-xs text-gray-500">%</span></div>
+              <div class="text-[10px] text-gray-500 mt-0.5">Unchanged · MPC Apr 26</div>
+              <svg viewBox="0 0 100 24" class="w-full h-6 mt-1"><polyline fill="none" stroke="#94a3b8" stroke-width="1.2" points="0,18 15,16 30,14 45,12 60,10 75,10 100,10"/></svg>
+            </div>
+            <div class="rounded-lg border border-gray-800 bg-[#111827] p-3">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">CPI Inflation</div>
+              <div class="mono text-lg font-semibold mt-1 text-amber-300">5.10<span class="text-xs text-gray-500">%</span></div>
+              <div class="text-[10px] text-amber-300 mt-0.5">▲ +30 bps MoM</div>
+              <svg viewBox="0 0 100 24" class="w-full h-6 mt-1"><polyline fill="none" stroke="#fbbf24" stroke-width="1.2" points="0,16 15,14 30,15 45,12 60,11 75,8 100,6"/></svg>
+            </div>
+            <div class="rounded-lg border border-gray-800 bg-[#111827] p-3">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">GDP Growth Q4</div>
+              <div class="mono text-lg font-semibold mt-1 text-emerald-300">7.20<span class="text-xs text-gray-500">%</span></div>
+              <div class="text-[10px] text-emerald-300 mt-0.5">▲ +40 bps YoY</div>
+              <svg viewBox="0 0 100 24" class="w-full h-6 mt-1"><polyline fill="none" stroke="#34d399" stroke-width="1.2" points="0,18 15,16 30,12 45,14 60,9 75,7 100,5"/></svg>
+            </div>
+            <div class="rounded-lg border border-gray-800 bg-[#111827] p-3">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">USD / INR</div>
+              <div class="mono text-lg font-semibold mt-1">83.42</div>
+              <div class="text-[10px] text-red-300 mt-0.5">▼ -0.18 today</div>
+              <svg viewBox="0 0 100 24" class="w-full h-6 mt-1"><polyline fill="none" stroke="#f87171" stroke-width="1.2" points="0,10 15,12 30,11 45,13 60,12 75,15 100,14"/></svg>
+            </div>
+            <div class="rounded-lg border border-gray-800 bg-[#111827] p-3">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">10Y G-Sec</div>
+              <div class="mono text-lg font-semibold mt-1">7.05<span class="text-xs text-gray-500">%</span></div>
+              <div class="text-[10px] text-gray-500 mt-0.5">▼ -2 bps</div>
+              <svg viewBox="0 0 100 24" class="w-full h-6 mt-1"><polyline fill="none" stroke="#94a3b8" stroke-width="1.2" points="0,8 15,10 30,12 45,11 60,13 75,12 100,14"/></svg>
+            </div>
+            <div class="rounded-lg border border-gray-800 bg-[#111827] p-3">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Brent Crude</div>
+              <div class="mono text-lg font-semibold mt-1">$82.41</div>
+              <div class="text-[10px] text-emerald-300 mt-0.5">▲ +1.2%</div>
+              <svg viewBox="0 0 100 24" class="w-full h-6 mt-1"><polyline fill="none" stroke="#34d399" stroke-width="1.2" points="0,16 15,18 30,15 45,13 60,11 75,9 100,8"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leaderboard + News -->
+        <div class="px-6 py-6 grid grid-cols-1 xl:grid-cols-3 gap-5">
+          <!-- Leaderboard -->
+          <div class="xl:col-span-2 rounded-xl border border-gray-800 bg-[#111827]">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div class="flex items-center gap-2">
+                <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i>
+                <h3 class="text-sm font-semibold">Market Leaderboard</h3>
+                <span class="text-[11px] text-gray-500">· Ranked by Total Revenue FY26</span>
+              </div>
+              <div class="flex gap-1">
+                <button class="text-[11px] px-2 py-1 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Revenue</button>
+                <button class="text-[11px] px-2 py-1 rounded text-gray-400 hover:bg-gray-800">EBITDA</button>
+                <button class="text-[11px] px-2 py-1 rounded text-gray-400 hover:bg-gray-800">PAT</button>
+                <button class="text-[11px] px-2 py-1 rounded text-gray-400 hover:bg-gray-800">M-Cap</button>
+              </div>
+            </div>
+            <table class="w-full text-sm">
+              <thead class="text-[10px] uppercase tracking-wider text-gray-500 border-b border-gray-800">
+                <tr><th class="text-left px-4 py-2 font-medium">#</th><th class="text-left py-2 font-medium">Company</th><th class="text-left py-2 font-medium">Sector</th><th class="text-right py-2 font-medium">Revenue (₹ Cr)</th><th class="text-right py-2 font-medium">YoY</th><th class="text-right px-4 py-2 font-medium">Sentiment</th></tr>
+              </thead>
+              <tbody class="mono">
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5 text-gray-500">1</td>
+                  <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-[10px] text-blue-300 font-bold">RIL</div><div><div class="font-medium text-gray-100 text-[13px]">Reliance Industries</div><div class="text-[10px] text-gray-500">RELIANCE · NSE</div></div></div></td>
+                  <td class="py-2.5 text-gray-400 text-xs">Energy / Retail</td>
+                  <td class="text-right">9,87,432</td>
+                  <td class="text-right text-emerald-400">+8.2%</td>
+                  <td class="text-right px-4"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Positive</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5 text-gray-500">2</td>
+                  <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded bg-indigo-500/20 flex items-center justify-center text-[10px] text-indigo-300 font-bold">TCS</div><div><div class="font-medium text-gray-100 text-[13px]">Tata Consultancy Services</div><div class="text-[10px] text-gray-500">TCS · NSE</div></div></div></td>
+                  <td class="py-2.5 text-gray-400 text-xs">IT Services</td>
+                  <td class="text-right">2,41,158</td>
+                  <td class="text-right text-emerald-400">+6.4%</td>
+                  <td class="text-right px-4"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Positive</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5 text-gray-500">3</td>
+                  <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded bg-red-500/20 flex items-center justify-center text-[10px] text-red-300 font-bold">SBI</div><div><div class="font-medium text-gray-100 text-[13px]">State Bank of India</div><div class="text-[10px] text-gray-500">SBIN · NSE</div></div></div></td>
+                  <td class="py-2.5 text-gray-400 text-xs">PSU Bank</td>
+                  <td class="text-right">4,73,290</td>
+                  <td class="text-right text-emerald-400">+11.7%</td>
+                  <td class="text-right px-4"><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Neutral</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5 text-gray-500">4</td>
+                  <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-[10px] text-emerald-300 font-bold">HD</div><div><div class="font-medium text-gray-100 text-[13px]">HDFC Bank</div><div class="text-[10px] text-gray-500">HDFCBANK · NSE</div></div></div></td>
+                  <td class="py-2.5 text-gray-400 text-xs">Private Bank</td>
+                  <td class="text-right">3,82,114</td>
+                  <td class="text-right text-emerald-400">+14.3%</td>
+                  <td class="text-right px-4"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Positive</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5 text-gray-500">5</td>
+                  <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded bg-purple-500/20 flex items-center justify-center text-[10px] text-purple-300 font-bold">IN</div><div><div class="font-medium text-gray-100 text-[13px]">Infosys</div><div class="text-[10px] text-gray-500">INFY · NSE</div></div></div></td>
+                  <td class="py-2.5 text-gray-400 text-xs">IT Services</td>
+                  <td class="text-right">1,58,892</td>
+                  <td class="text-right text-red-400">-1.8%</td>
+                  <td class="text-right px-4"><span class="chip bg-red-500/10 text-red-300 border border-red-500/30">Cautious</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5 text-gray-500">6</td>
+                  <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded bg-orange-500/20 flex items-center justify-center text-[10px] text-orange-300 font-bold">BA</div><div><div class="font-medium text-gray-100 text-[13px]">Bharti Airtel</div><div class="text-[10px] text-gray-500">BHARTIARTL · NSE</div></div></div></td>
+                  <td class="py-2.5 text-gray-400 text-xs">Telecom</td>
+                  <td class="text-right">1,49,375</td>
+                  <td class="text-right text-emerald-400">+7.9%</td>
+                  <td class="text-right px-4"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Positive</span></td>
+                </tr>
+                <tr class="hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5 text-gray-500">7</td>
+                  <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded bg-yellow-500/20 flex items-center justify-center text-[10px] text-yellow-300 font-bold">IT</div><div><div class="font-medium text-gray-100 text-[13px]">ITC Limited</div><div class="text-[10px] text-gray-500">ITC · NSE</div></div></div></td>
+                  <td class="py-2.5 text-gray-400 text-xs">FMCG</td>
+                  <td class="text-right">71,684</td>
+                  <td class="text-right text-emerald-400">+5.1%</td>
+                  <td class="text-right px-4"><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Neutral</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- News feed -->
+          <div class="rounded-xl border border-gray-800 bg-[#111827] flex flex-col">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div class="flex items-center gap-2">
+                <i data-lucide="rss" class="w-4 h-4 text-indigo-400"></i>
+                <h3 class="text-sm font-semibold">Recent News</h3>
+              </div>
+              <span class="text-[10px] text-emerald-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live</span>
+            </div>
+            <div class="flex-1 overflow-y-auto divide-y divide-gray-800/60">
+              <div class="px-4 py-3 hover:bg-gray-800/30 cursor-pointer">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">ET</span>
+                  <span class="chip bg-gray-800 text-gray-400 border border-gray-700">RELIANCE</span>
+                  <span class="text-[10px] text-gray-500 ml-auto">12 min</span>
+                </div>
+                <div class="text-[13px] leading-snug text-gray-100">Reliance Jio crosses 480 mn subscribers, gains 2.1 mn in May ahead of rivals</div>
+                <div class="text-[11px] text-gray-500 mt-1">Economic Times · Mukesh Ambani signals further tariff hike in FY27</div>
+              </div>
+              <div class="px-4 py-3 hover:bg-gray-800/30 cursor-pointer">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="chip bg-rose-500/10 text-rose-300 border border-rose-500/30">MC</span>
+                  <span class="chip bg-gray-800 text-gray-400 border border-gray-700">INFY</span>
+                  <span class="text-[10px] text-gray-500 ml-auto">34 min</span>
+                </div>
+                <div class="text-[13px] leading-snug text-gray-100">Infosys downgraded by Jefferies to 'Hold' on weak FY27 deal book guidance</div>
+                <div class="text-[11px] text-gray-500 mt-1">Moneycontrol · Target cut to ₹1,520 (-9%)</div>
+              </div>
+              <div class="px-4 py-3 hover:bg-gray-800/30 cursor-pointer">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">BS</span>
+                  <span class="chip bg-gray-800 text-gray-400 border border-gray-700">MACRO</span>
+                  <span class="text-[10px] text-gray-500 ml-auto">1 hr</span>
+                </div>
+                <div class="text-[13px] leading-snug text-gray-100">RBI holds repo at 6.50%, MPC maintains 'withdrawal of accommodation' stance</div>
+                <div class="text-[11px] text-gray-500 mt-1">Business Standard · 4:2 vote split, Varma dissents on rate</div>
+              </div>
+              <div class="px-4 py-3 hover:bg-gray-800/30 cursor-pointer">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">MINT</span>
+                  <span class="chip bg-gray-800 text-gray-400 border border-gray-700">TCS</span>
+                  <span class="text-[10px] text-gray-500 ml-auto">2 hr</span>
+                </div>
+                <div class="text-[13px] leading-snug text-gray-100">TCS wins $1.2 bn UK BFSI deal, largest contract since Phoenix in 2022</div>
+                <div class="text-[11px] text-gray-500 mt-1">Mint · Stock up 1.4% in early trade</div>
+              </div>
+              <div class="px-4 py-3 hover:bg-gray-800/30 cursor-pointer">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">ET</span>
+                  <span class="chip bg-gray-800 text-gray-400 border border-gray-700">HDFCBANK</span>
+                  <span class="text-[10px] text-gray-500 ml-auto">3 hr</span>
+                </div>
+                <div class="text-[13px] leading-snug text-gray-100">HDFC Bank deposit growth lags peers in May; CASA ratio stabilises at 38.4%</div>
+                <div class="text-[11px] text-gray-500 mt-1">Economic Times · Analysts trim FY27 NIM estimates by 10 bps</div>
+              </div>
+              <div class="px-4 py-3 hover:bg-gray-800/30 cursor-pointer">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="chip bg-rose-500/10 text-rose-300 border border-rose-500/30">MC</span>
+                  <span class="chip bg-gray-800 text-gray-400 border border-gray-700">SECTOR</span>
+                  <span class="text-[10px] text-gray-500 ml-auto">4 hr</span>
+                </div>
+                <div class="text-[13px] leading-snug text-gray-100">FMCG volumes pick up in rural markets after two-quarter slump: NielsenIQ</div>
+                <div class="text-[11px] text-gray-500 mt-1">Moneycontrol · HUL, Dabur, Marico top picks</div>
+              </div>
+            </div>
+            <div class="px-4 py-2 border-t border-gray-800 text-center">
+              <a href="#" class="text-xs text-indigo-400 hover:underline">View all 38,572 articles →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anomalies + Agent runs strip -->
+        <div class="px-6 pb-8 grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div class="rounded-xl border border-gray-800 bg-[#111827]">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div class="flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i><h3 class="text-sm font-semibold">Open Anomalies</h3><span class="chip bg-red-500/10 text-red-300 border border-red-500/30">23 high</span></div>
+              <a href="#" class="text-xs text-indigo-400 hover:underline">All →</a>
+            </div>
+            <div class="divide-y divide-gray-800/60">
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <span class="chip severity-high">HIGH</span>
+                <span class="mono text-xs text-gray-400 w-20">INFY</span>
+                <span class="flex-1 text-gray-200 text-[13px]">Q4 revenue dropped 18% QoQ vs guidance of -3% to -5%</span>
+                <span class="text-[11px] text-gray-500">2h ago</span>
+              </div>
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <span class="chip severity-med">MED</span>
+                <span class="mono text-xs text-gray-400 w-20">SBIN</span>
+                <span class="flex-1 text-gray-200 text-[13px]">Provisions for stressed assets up 42% QoQ in Q4 FY26</span>
+                <span class="text-[11px] text-gray-500">5h ago</span>
+              </div>
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <span class="chip severity-high">HIGH</span>
+                <span class="mono text-xs text-gray-400 w-20">ZEE</span>
+                <span class="flex-1 text-gray-200 text-[13px]">Auditor flagged related-party transactions in FY26 annual report</span>
+                <span class="text-[11px] text-gray-500">1d ago</span>
+              </div>
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <span class="chip severity-low">LOW</span>
+                <span class="mono text-xs text-gray-400 w-20">ITC</span>
+                <span class="flex-1 text-gray-200 text-[13px]">Cigarette segment volume growth diverged from industry by &gt;200 bps</span>
+                <span class="text-[11px] text-gray-500">1d ago</span>
+              </div>
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <span class="chip severity-med">MED</span>
+                <span class="mono text-xs text-gray-400 w-20">BAJFIN</span>
+                <span class="flex-1 text-gray-200 text-[13px]">Loan loss provisions exceeded model estimate by ₹612 Cr</span>
+                <span class="text-[11px] text-gray-500">2d ago</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-gray-800 bg-[#111827]">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div class="flex items-center gap-2"><i data-lucide="bot" class="w-4 h-4 text-indigo-400"></i><h3 class="text-sm font-semibold">Agent Activity</h3></div>
+              <span class="text-[11px] text-gray-500">Last 24h</span>
+            </div>
+            <div class="divide-y divide-gray-800/60">
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <div class="w-7 h-7 rounded-md bg-emerald-500/15 flex items-center justify-center"><i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-emerald-300"></i></div>
+                <div class="flex-1"><div class="text-[13px]">Financial Health Screener · RELIANCE</div><div class="text-[11px] text-gray-500">Completed in 4.2s · 12 checks passed</div></div>
+                <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">OK</span>
+              </div>
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <div class="w-7 h-7 rounded-md bg-purple-500/15 flex items-center justify-center"><i data-lucide="message-square-text" class="w-3.5 h-3.5 text-purple-300"></i></div>
+                <div class="flex-1"><div class="text-[13px]">Earnings Intelligence · TCS Q4 Concall</div><div class="text-[11px] text-gray-500">Synthesised 28 pages · 6 themes extracted</div></div>
+                <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">OK</span>
+              </div>
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <div class="w-7 h-7 rounded-md bg-amber-500/15 flex items-center justify-center"><i data-lucide="alert-octagon" class="w-3.5 h-3.5 text-amber-300"></i></div>
+                <div class="flex-1"><div class="text-[13px]">Management Credibility · INFY</div><div class="text-[11px] text-gray-500">Detected 3 guidance misses in last 4 quarters</div></div>
+                <span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Flagged</span>
+              </div>
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <div class="w-7 h-7 rounded-md bg-indigo-500/15 flex items-center justify-center"><i data-lucide="brain" class="w-3.5 h-3.5 text-indigo-300"></i></div>
+                <div class="flex-1"><div class="text-[13px]">Mental Model Scorecard · HDFCBANK</div><div class="text-[11px] text-gray-500">Scored against 8 quality dimensions</div></div>
+                <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">OK</span>
+              </div>
+              <div class="px-4 py-2.5 flex items-center gap-3 text-sm">
+                <div class="w-7 h-7 rounded-md bg-blue-500/15 flex items-center justify-center"><i data-lucide="loader-circle" class="w-3.5 h-3.5 text-blue-300 animate-spin"></i></div>
+                <div class="flex-1"><div class="text-[13px]">Industry Analysis · IT Services</div><div class="text-[11px] text-gray-500">Generating TAM model · 64%</div></div>
+                <span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">Running</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ COMPANIES ============================ -->
+      <section id="section-companies" class="section">
+        <div class="px-6 py-5 border-b border-gray-800 flex items-end justify-between flex-wrap gap-3">
+          <div>
+            <h1 class="text-xl font-bold">Companies Directory</h1>
+            <p class="text-sm text-gray-400">487 covered · NSE, BSE · last sync 03 Jun 14:12 IST</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="text-xs border border-gray-800 rounded-lg px-3 py-2 flex items-center gap-1.5 hover:bg-gray-800/60"><i data-lucide="filter" class="w-3.5 h-3.5"></i> Filters</button>
+            <button class="text-xs border border-gray-800 rounded-lg px-3 py-2 flex items-center gap-1.5 hover:bg-gray-800/60"><i data-lucide="download" class="w-3.5 h-3.5"></i> CSV</button>
+            <button class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-3 py-2 flex items-center gap-1.5"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Company</button>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 flex flex-wrap items-center gap-2 border-b border-gray-800 bg-[#0d1220]">
+          <div class="relative flex-1 max-w-sm">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i>
+            <input type="text" placeholder="Search by name or ticker…" class="w-full bg-gray-900/60 border border-gray-800 rounded-lg pl-10 pr-3 py-2 text-sm focus:outline-none focus:border-indigo-500/50" />
+          </div>
+          <select class="bg-gray-900/60 border border-gray-800 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none">
+            <option>All Sectors</option><option>Energy</option><option>IT Services</option><option>Banking</option><option>FMCG</option><option>Telecom</option>
+          </select>
+          <select class="bg-gray-900/60 border border-gray-800 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none">
+            <option>All Exchanges</option><option>NSE</option><option>BSE</option>
+          </select>
+          <select class="bg-gray-900/60 border border-gray-800 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none">
+            <option>Any Market Cap</option><option>Mega (&gt;₹2L Cr)</option><option>Large</option><option>Mid</option><option>Small</option>
+          </select>
+          <div class="ml-auto text-xs text-gray-500">Showing <span class="text-gray-200 mono">1–10</span> of <span class="text-gray-200 mono">487</span></div>
+        </div>
+
+        <div class="px-6 py-5">
+          <div class="rounded-xl border border-gray-800 bg-[#111827] overflow-hidden">
+            <table class="w-full text-sm">
+              <thead class="text-[10px] uppercase tracking-wider text-gray-500 border-b border-gray-800 bg-[#0d1220]">
+                <tr>
+                  <th class="text-left px-4 py-2.5 font-medium">Ticker</th>
+                  <th class="text-left py-2.5 font-medium">Name</th>
+                  <th class="text-left py-2.5 font-medium">Exchange</th>
+                  <th class="text-left py-2.5 font-medium">Sector</th>
+                  <th class="text-right py-2.5 font-medium">Market Cap</th>
+                  <th class="text-left py-2.5 font-medium">Currency</th>
+                  <th class="text-left py-2.5 font-medium">Coverage</th>
+                  <th class="text-right px-4 py-2.5 font-medium"></th>
+                </tr>
+              </thead>
+              <tbody class="mono">
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">RELIANCE</td>
+                  <td class="py-3 text-gray-300">Reliance Industries Ltd</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">Energy · Retail · Telecom</td>
+                  <td class="py-3 text-right">₹19,84,232 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500 hover:text-indigo-300"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">TCS</td>
+                  <td class="py-3 text-gray-300">Tata Consultancy Services Ltd</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">IT Services</td>
+                  <td class="py-3 text-right">₹14,21,540 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">HDFCBANK</td>
+                  <td class="py-3 text-gray-300">HDFC Bank Ltd</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">Private Bank</td>
+                  <td class="py-3 text-right">₹12,98,415 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">INFY</td>
+                  <td class="py-3 text-gray-300">Infosys Ltd</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">IT Services</td>
+                  <td class="py-3 text-right">₹6,42,710 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Partial</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">ICICIBANK</td>
+                  <td class="py-3 text-gray-300">ICICI Bank Ltd</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">Private Bank</td>
+                  <td class="py-3 text-right">₹8,14,920 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">HINDUNILVR</td>
+                  <td class="py-3 text-gray-300">Hindustan Unilever Ltd</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">FMCG</td>
+                  <td class="py-3 text-right">₹5,82,144 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">BHARTIARTL</td>
+                  <td class="py-3 text-gray-300">Bharti Airtel Ltd</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">Telecom</td>
+                  <td class="py-3 text-right">₹7,93,250 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">ITC</td>
+                  <td class="py-3 text-gray-300">ITC Limited</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">FMCG · Cigarettes</td>
+                  <td class="py-3 text-right">₹5,21,318 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">SBIN</td>
+                  <td class="py-3 text-gray-300">State Bank of India</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">PSU Bank</td>
+                  <td class="py-3 text-right">₹6,89,750 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+                <tr class="hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 font-semibold text-gray-100">LT</td>
+                  <td class="py-3 text-gray-300">Larsen &amp; Toubro Ltd</td>
+                  <td class="py-3 text-gray-400 text-xs">NSE</td>
+                  <td class="py-3 text-gray-400 text-xs">Infrastructure</td>
+                  <td class="py-3 text-right">₹4,73,612 Cr</td>
+                  <td class="py-3 text-gray-400 text-xs">INR</td>
+                  <td class="py-3"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full</span></td>
+                  <td class="px-4 py-3 text-right text-gray-500"><i data-lucide="arrow-up-right" class="w-4 h-4 inline"></i></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="flex items-center justify-between px-4 py-3 border-t border-gray-800 text-xs text-gray-400">
+              <span>Page 1 of 49</span>
+              <div class="flex gap-1">
+                <button class="px-2.5 py-1 border border-gray-800 rounded hover:bg-gray-800" disabled>Prev</button>
+                <button class="px-2.5 py-1 border border-indigo-500/40 bg-indigo-500/10 text-indigo-200 rounded">1</button>
+                <button class="px-2.5 py-1 border border-gray-800 rounded hover:bg-gray-800">2</button>
+                <button class="px-2.5 py-1 border border-gray-800 rounded hover:bg-gray-800">3</button>
+                <button class="px-2.5 py-1 text-gray-500">…</button>
+                <button class="px-2.5 py-1 border border-gray-800 rounded hover:bg-gray-800">49</button>
+                <button class="px-2.5 py-1 border border-gray-800 rounded hover:bg-gray-800">Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ COMPANY DETAIL ============================ -->
+      <section id="section-company-detail" class="section">
+        <!-- Breadcrumb + header -->
+        <div class="border-b border-gray-800 bg-[#0d1220]">
+          <div class="px-6 pt-4">
+            <div class="text-xs text-gray-500 mb-3 flex items-center gap-1"><a href="#" class="hover:text-indigo-300">Companies</a><i data-lucide="chevron-right" class="w-3 h-3"></i><span class="text-gray-300">Reliance Industries Ltd</span></div>
+            <div class="flex items-start justify-between flex-wrap gap-4 pb-4">
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/30 to-indigo-500/30 border border-blue-500/40 flex items-center justify-center font-bold text-blue-200">RIL</div>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h1 class="text-xl font-bold">Reliance Industries Ltd</h1>
+                    <span class="chip bg-gray-800 text-gray-300 border border-gray-700 mono">NSE: RELIANCE</span>
+                    <span class="chip bg-gray-800 text-gray-300 border border-gray-700 mono">BSE: 500325</span>
+                    <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Full Coverage</span>
+                  </div>
+                  <div class="flex items-center gap-3 text-xs text-gray-500 mt-1.5">
+                    <span class="flex items-center gap-1"><i data-lucide="briefcase" class="w-3 h-3"></i> Energy · Retail · Telecom</span>
+                    <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i> Mumbai, IN</span>
+                    <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> 389,414 employees</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="text-xs border border-gray-800 rounded-lg px-3 py-2 hover:bg-gray-800/60 flex items-center gap-1.5"><i data-lucide="star" class="w-3.5 h-3.5"></i> Watch</button>
+                <button class="text-xs border border-gray-800 rounded-lg px-3 py-2 hover:bg-gray-800/60 flex items-center gap-1.5"><i data-lucide="share-2" class="w-3.5 h-3.5"></i> Share</button>
+                <button class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-3 py-2 flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5"></i> Re-Run All Agents</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key stats strip -->
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 border-t border-gray-800">
+            <div class="px-5 py-3 border-r border-gray-800">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Price · LTP</div>
+              <div class="mono text-base font-semibold text-emerald-300">₹2,932.15 <span class="text-[11px]">+1.24%</span></div>
+            </div>
+            <div class="px-5 py-3 border-r border-gray-800">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Market Cap</div>
+              <div class="mono text-base font-semibold">₹19.84 L Cr</div>
+            </div>
+            <div class="px-5 py-3 border-r border-gray-800">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Currency</div>
+              <div class="mono text-base font-semibold">INR</div>
+            </div>
+            <div class="px-5 py-3 border-r border-gray-800">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">P/E (TTM)</div>
+              <div class="mono text-base font-semibold">28.4×</div>
+            </div>
+            <div class="px-5 py-3 border-r border-gray-800">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Open Anomalies</div>
+              <div class="mono text-base font-semibold text-amber-300">3 <span class="text-[11px] text-amber-300/70">· 1 high</span></div>
+            </div>
+            <div class="px-5 py-3 border-r border-gray-800">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Research Cycles</div>
+              <div class="mono text-base font-semibold">4 <span class="text-[11px] text-indigo-300">· 1 active</span></div>
+            </div>
+            <div class="px-5 py-3">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Last Agent Run</div>
+              <div class="mono text-base font-semibold">2h ago</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agent tabs -->
+        <div class="px-6 pt-5">
+          <div class="flex items-center gap-1 flex-wrap border border-gray-800 rounded-lg p-1 bg-[#0d1220] w-fit">
+            <button class="agent-tab active px-3 py-1.5 text-xs rounded border border-transparent text-gray-300" data-group="agents" data-id="auto">Auto-Run</button>
+            <button class="agent-tab px-3 py-1.5 text-xs rounded border border-transparent text-gray-400" data-group="agents" data-id="business">Business</button>
+            <button class="agent-tab px-3 py-1.5 text-xs rounded border border-transparent text-gray-400" data-group="agents" data-id="peers">Peers</button>
+            <button class="agent-tab px-3 py-1.5 text-xs rounded border border-transparent text-gray-400" data-group="agents" data-id="industry">Industry</button>
+            <button class="agent-tab px-3 py-1.5 text-xs rounded border border-transparent text-gray-400" data-group="agents" data-id="precall">Pre-Call Pack</button>
+            <button class="agent-tab px-3 py-1.5 text-xs rounded border border-transparent text-gray-400" data-group="agents" data-id="anomalies">Anomalies</button>
+            <button class="agent-tab px-3 py-1.5 text-xs rounded border border-transparent text-gray-400" data-group="agents" data-id="cycles">Research Cycles</button>
+          </div>
+        </div>
+
+        <!-- AUTO-RUN PANE -->
+        <div class="agent-pane px-6 py-5" data-group="agents" data-id="auto">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <!-- Financial Health Screener -->
+            <div class="rounded-xl border border-gray-800 bg-[#111827]">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-md bg-emerald-500/15 flex items-center justify-center"><i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-emerald-300"></i></div><div><div class="text-sm font-semibold">Financial Health Screener</div><div class="text-[10px] text-gray-500">Generated 2h ago · FY26 Q4</div></div></div>
+                <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Healthy · 12/12</span>
+              </div>
+              <div class="p-4 grid grid-cols-2 gap-3 text-sm">
+                <div class="flex items-center justify-between"><span class="text-gray-400">Revenue Growth (3Y CAGR)</span><span class="mono text-emerald-300">+14.2%</span></div>
+                <div class="flex items-center justify-between"><span class="text-gray-400">EBITDA Margin</span><span class="mono">17.8%</span></div>
+                <div class="flex items-center justify-between"><span class="text-gray-400">Net Debt / EBITDA</span><span class="mono text-emerald-300">1.4×</span></div>
+                <div class="flex items-center justify-between"><span class="text-gray-400">Interest Coverage</span><span class="mono">6.8×</span></div>
+                <div class="flex items-center justify-between"><span class="text-gray-400">Free Cash Flow</span><span class="mono text-emerald-300">₹84,213 Cr</span></div>
+                <div class="flex items-center justify-between"><span class="text-gray-400">ROCE</span><span class="mono">11.4%</span></div>
+                <div class="flex items-center justify-between"><span class="text-gray-400">Working Cap. Days</span><span class="mono">28d</span></div>
+                <div class="flex items-center justify-between"><span class="text-gray-400">Beneish M-Score</span><span class="mono text-emerald-300">-2.41</span></div>
+              </div>
+            </div>
+
+            <!-- News Sentiment -->
+            <div class="rounded-xl border border-gray-800 bg-[#111827]">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-md bg-blue-500/15 flex items-center justify-center"><i data-lucide="newspaper" class="w-3.5 h-3.5 text-blue-300"></i></div><div><div class="text-sm font-semibold">News Sentiment</div><div class="text-[10px] text-gray-500">Last 30 days · 184 articles</div></div></div>
+                <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Positive · 0.42</span>
+              </div>
+              <div class="p-4 text-sm">
+                <div class="grid grid-cols-3 gap-3 text-center mb-3">
+                  <div><div class="mono text-2xl text-emerald-300 font-bold">68%</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Positive</div></div>
+                  <div><div class="mono text-2xl text-gray-300 font-bold">21%</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Neutral</div></div>
+                  <div><div class="mono text-2xl text-red-300 font-bold">11%</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Negative</div></div>
+                </div>
+                <div class="h-1.5 rounded-full overflow-hidden flex bg-gray-800 mb-4">
+                  <div class="bg-emerald-400" style="width:68%"></div>
+                  <div class="bg-gray-500" style="width:21%"></div>
+                  <div class="bg-red-400" style="width:11%"></div>
+                </div>
+                <div class="text-[11px] uppercase tracking-wider text-gray-500 mb-2">Top Themes</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Jio tariff hike +28</span>
+                  <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Retail expansion +19</span>
+                  <span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">Green energy capex +14</span>
+                  <span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">O2C margins flat -6</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Earnings Intelligence -->
+            <div class="rounded-xl border border-gray-800 bg-[#111827]">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-md bg-purple-500/15 flex items-center justify-center"><i data-lucide="message-square-text" class="w-3.5 h-3.5 text-purple-300"></i></div><div><div class="text-sm font-semibold">Earnings Intelligence</div><div class="text-[10px] text-gray-500">Q4 FY26 concall · 28 pages</div></div></div>
+                <span class="chip bg-purple-500/10 text-purple-300 border border-purple-500/30">6 themes</span>
+              </div>
+              <div class="p-4 space-y-2.5 text-sm">
+                <div class="flex gap-2"><i data-lucide="quote" class="w-3.5 h-3.5 text-gray-500 mt-0.5 flex-shrink-0"></i><div><div class="text-gray-200">"Jio expects ARPU to hit ₹235–245 by end-FY27, driven by tariff and 5G upsell."</div><div class="text-[11px] text-gray-500 mt-0.5">CFO V Manoj · Q&amp;A · pg 14</div></div></div>
+                <div class="flex gap-2"><i data-lucide="quote" class="w-3.5 h-3.5 text-gray-500 mt-0.5 flex-shrink-0"></i><div><div class="text-gray-200">"Retail store openings to slow in FY27 — focus shifts to SSSG and unit economics."</div><div class="text-[11px] text-gray-500 mt-0.5">Isha Ambani · pg 9</div></div></div>
+                <div class="flex gap-2"><i data-lucide="quote" class="w-3.5 h-3.5 text-gray-500 mt-0.5 flex-shrink-0"></i><div><div class="text-gray-200">"₹75,000 Cr green H2 capex on schedule; Jamnagar gigafactory commissioned Q2 FY27."</div><div class="text-[11px] text-gray-500 mt-0.5">MD M Ambani · pg 4</div></div></div>
+              </div>
+            </div>
+
+            <!-- Management Credibility -->
+            <div class="rounded-xl border border-gray-800 bg-[#111827]">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-md bg-indigo-500/15 flex items-center justify-center"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-300"></i></div><div><div class="text-sm font-semibold">Management Credibility</div><div class="text-[10px] text-gray-500">Last 8 quarters · guidance vs actual</div></div></div>
+                <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Score 82 / 100</span>
+              </div>
+              <div class="p-4 text-sm">
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                  <div><div class="text-[11px] text-gray-500">Beats vs Guidance</div><div class="mono text-lg text-emerald-300">6 of 8</div></div>
+                  <div><div class="text-[11px] text-gray-500">Avg. Surprise</div><div class="mono text-lg text-emerald-300">+3.4%</div></div>
+                  <div><div class="text-[11px] text-gray-500">Capex Slippage</div><div class="mono text-lg">2 of 8</div></div>
+                  <div><div class="text-[11px] text-gray-500">Disclosure Score</div><div class="mono text-lg">A-</div></div>
+                </div>
+                <!-- bar chart -->
+                <svg viewBox="0 0 280 48" class="w-full h-12">
+                  <g>
+                    <rect x="0"   y="20" width="28" height="20" fill="#34d399" rx="2"/>
+                    <rect x="36"  y="14" width="28" height="26" fill="#34d399" rx="2"/>
+                    <rect x="72"  y="24" width="28" height="16" fill="#fbbf24" rx="2"/>
+                    <rect x="108" y="10" width="28" height="30" fill="#34d399" rx="2"/>
+                    <rect x="144" y="8"  width="28" height="32" fill="#34d399" rx="2"/>
+                    <rect x="180" y="26" width="28" height="14" fill="#f87171" rx="2"/>
+                    <rect x="216" y="16" width="28" height="24" fill="#34d399" rx="2"/>
+                    <rect x="252" y="12" width="28" height="28" fill="#34d399" rx="2"/>
+                  </g>
+                </svg>
+                <div class="flex justify-between mono text-[10px] text-gray-500 mt-1">
+                  <span>Q1·24</span><span>Q2·24</span><span>Q3·24</span><span>Q4·24</span><span>Q1·25</span><span>Q2·25</span><span>Q3·25</span><span>Q4·25</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mental Model Scorecard -->
+            <div class="rounded-xl border border-gray-800 bg-[#111827] lg:col-span-2">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+                <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-md bg-amber-500/15 flex items-center justify-center"><i data-lucide="brain" class="w-3.5 h-3.5 text-amber-300"></i></div><div><div class="text-sm font-semibold">Mental Model Scorecard</div><div class="text-[10px] text-gray-500">8-dimension quality assessment</div></div></div>
+                <span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Composite 7.4 / 10</span>
+              </div>
+              <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
+                  <div class="flex items-center justify-between"><span class="text-gray-300">Moat</span><span class="mono font-bold text-emerald-300">9</span></div>
+                  <div class="h-1 bg-gray-800 mt-2 rounded-full"><div class="bg-emerald-400 h-1 rounded-full" style="width:90%"></div></div>
+                </div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
+                  <div class="flex items-center justify-between"><span class="text-gray-300">Capital Allocation</span><span class="mono font-bold text-amber-300">6</span></div>
+                  <div class="h-1 bg-gray-800 mt-2 rounded-full"><div class="bg-amber-400 h-1 rounded-full" style="width:60%"></div></div>
+                </div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
+                  <div class="flex items-center justify-between"><span class="text-gray-300">Cash Generation</span><span class="mono font-bold text-emerald-300">8</span></div>
+                  <div class="h-1 bg-gray-800 mt-2 rounded-full"><div class="bg-emerald-400 h-1 rounded-full" style="width:80%"></div></div>
+                </div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
+                  <div class="flex items-center justify-between"><span class="text-gray-300">Reinvestment Runway</span><span class="mono font-bold text-emerald-300">9</span></div>
+                  <div class="h-1 bg-gray-800 mt-2 rounded-full"><div class="bg-emerald-400 h-1 rounded-full" style="width:90%"></div></div>
+                </div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
+                  <div class="flex items-center justify-between"><span class="text-gray-300">Optionality</span><span class="mono font-bold text-emerald-300">8</span></div>
+                  <div class="h-1 bg-gray-800 mt-2 rounded-full"><div class="bg-emerald-400 h-1 rounded-full" style="width:80%"></div></div>
+                </div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
+                  <div class="flex items-center justify-between"><span class="text-gray-300">Governance</span><span class="mono font-bold text-amber-300">6</span></div>
+                  <div class="h-1 bg-gray-800 mt-2 rounded-full"><div class="bg-amber-400 h-1 rounded-full" style="width:60%"></div></div>
+                </div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
+                  <div class="flex items-center justify-between"><span class="text-gray-300">Cyclical Risk</span><span class="mono font-bold text-red-300">4</span></div>
+                  <div class="h-1 bg-gray-800 mt-2 rounded-full"><div class="bg-red-400 h-1 rounded-full" style="width:40%"></div></div>
+                </div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
+                  <div class="flex items-center justify-between"><span class="text-gray-300">Predictability</span><span class="mono font-bold text-emerald-300">7</span></div>
+                  <div class="h-1 bg-gray-800 mt-2 rounded-full"><div class="bg-emerald-400 h-1 rounded-full" style="width:70%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUSINESS PANE -->
+        <div class="agent-pane px-6 py-5 hidden" data-group="agents" data-id="business">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div class="lg:col-span-2 rounded-xl border border-gray-800 bg-[#111827] p-5">
+              <div class="flex items-center gap-2 mb-3"><i data-lucide="file-text" class="w-4 h-4 text-indigo-300"></i><h3 class="text-sm font-semibold">Executive Summary</h3></div>
+              <p class="text-sm text-gray-300 leading-relaxed">Reliance Industries operates a vertically integrated conglomerate across <span class="text-emerald-300">Energy (O2C)</span>, <span class="text-emerald-300">Telecom (Jio)</span>, <span class="text-emerald-300">Organised Retail</span>, and <span class="text-blue-300">Digital / New Energy</span>. FY26 was an inflection year — Jio crossed 480 mn subs with ARPU climbing to ₹211, while Retail revenue compounded at 17% over FY24–26. Refining margins compressed on weak Asian product spreads, but new chemicals capacity at Sikka and Dahej offset volume losses. Management has guided net debt to fall below ₹1.8 L Cr by FY28 as green-energy capex peaks.</p>
+
+              <div class="mt-5 grid grid-cols-2 gap-3">
+                <div>
+                  <div class="text-[11px] uppercase tracking-wider text-emerald-300 mb-2 flex items-center gap-1"><i data-lucide="shield" class="w-3 h-3"></i> Moat Analysis</div>
+                  <ul class="text-sm text-gray-300 space-y-1.5">
+                    <li class="flex gap-2"><span class="text-emerald-400">•</span>Lowest-cost refiner in Asia (Nelson 14.5)</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">•</span>National 5G/4G spectrum + tower density</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">•</span>18,000+ retail stores · 250 mn customers</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">•</span>Captive feedstock advantage (oil-to-chem)</li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="text-[11px] uppercase tracking-wider text-blue-300 mb-2 flex items-center gap-1"><i data-lucide="rocket" class="w-3 h-3"></i> Growth Vectors</div>
+                  <ul class="text-sm text-gray-300 space-y-1.5">
+                    <li class="flex gap-2"><span class="text-blue-400">•</span>Jio tariff hike + 5G upsell → ARPU ₹245</li>
+                    <li class="flex gap-2"><span class="text-blue-400">•</span>Reliance Retail IPO unlock (FY28E)</li>
+                    <li class="flex gap-2"><span class="text-blue-400">•</span>Green H2 + solar gigafactory ramp</li>
+                    <li class="flex gap-2"><span class="text-blue-400">•</span>AI cloud JV (Nvidia / GPU as a service)</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="mt-5">
+                <div class="text-[11px] uppercase tracking-wider text-red-300 mb-2 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Key Risks</div>
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                  <div class="border border-red-500/20 bg-red-500/5 rounded p-2.5 text-gray-200"><span class="text-red-300 font-semibold text-xs">REGULATORY</span><div class="text-[12px] mt-0.5">Spectrum re-auction pricing in FY28</div></div>
+                  <div class="border border-red-500/20 bg-red-500/5 rounded p-2.5 text-gray-200"><span class="text-red-300 font-semibold text-xs">CYCLICAL</span><div class="text-[12px] mt-0.5">Asian GRMs &lt; $4/bbl scenario</div></div>
+                  <div class="border border-red-500/20 bg-red-500/5 rounded p-2.5 text-gray-200"><span class="text-red-300 font-semibold text-xs">CAPITAL</span><div class="text-[12px] mt-0.5">Green-H2 returns uncertain pre-FY29</div></div>
+                  <div class="border border-red-500/20 bg-red-500/5 rounded p-2.5 text-gray-200"><span class="text-red-300 font-semibold text-xs">GOVERNANCE</span><div class="text-[12px] mt-0.5">Family succession transition</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-5">
+              <div class="flex items-center gap-2 mb-3"><i data-lucide="pie-chart" class="w-4 h-4 text-indigo-300"></i><h3 class="text-sm font-semibold">Revenue Mix · FY26</h3></div>
+              <div class="flex items-center justify-center mb-4">
+                <svg viewBox="0 0 120 120" class="w-40 h-40 -rotate-90">
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="#1f2937" stroke-width="14"/>
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="#6366f1" stroke-width="14" stroke-dasharray="135 301" stroke-dashoffset="0"/>
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="#34d399" stroke-width="14" stroke-dasharray="90 301" stroke-dashoffset="-135"/>
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="#fbbf24" stroke-width="14" stroke-dasharray="50 301" stroke-dashoffset="-225"/>
+                  <circle cx="60" cy="60" r="48" fill="none" stroke="#f472b6" stroke-width="14" stroke-dasharray="26 301" stroke-dashoffset="-275"/>
+                </svg>
+              </div>
+              <div class="space-y-2 text-xs">
+                <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-indigo-500"></span>O2C (Energy)</span><span class="mono">45%</span></div>
+                <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-400"></span>Retail</span><span class="mono">30%</span></div>
+                <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-amber-400"></span>Jio (Digital)</span><span class="mono">17%</span></div>
+                <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-pink-400"></span>Others / E&amp;P</span><span class="mono">8%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PEERS PANE -->
+        <div class="agent-pane px-6 py-5 hidden" data-group="agents" data-id="peers">
+          <div class="rounded-xl border border-gray-800 bg-[#111827]">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div class="flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-indigo-300"></i><h3 class="text-sm font-semibold">Competitor Analysis</h3><span class="text-[11px] text-gray-500">· O2C + Retail + Telecom blended peers</span></div>
+            </div>
+            <table class="w-full text-sm">
+              <thead class="text-[10px] uppercase tracking-wider text-gray-500 border-b border-gray-800 bg-[#0d1220]">
+                <tr><th class="text-left px-4 py-2 font-medium">Company</th><th class="text-right py-2 font-medium">M-Cap (₹ Cr)</th><th class="text-right py-2 font-medium">P/E</th><th class="text-right py-2 font-medium">EV/EBITDA</th><th class="text-right py-2 font-medium">ROCE</th><th class="text-right py-2 font-medium">Rev Growth 3Y</th><th class="text-right px-4 py-2 font-medium">Premium / Discount</th></tr>
+              </thead>
+              <tbody class="mono">
+                <tr class="border-b border-gray-800/60 bg-indigo-500/5">
+                  <td class="px-4 py-3"><span class="text-gray-100 font-semibold">RELIANCE</span><span class="text-[10px] text-indigo-300 ml-2">(subject)</span></td>
+                  <td class="text-right">19,84,232</td><td class="text-right">28.4×</td><td class="text-right">12.6×</td><td class="text-right">11.4%</td><td class="text-right text-emerald-300">+14.2%</td>
+                  <td class="text-right px-4">—</td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-3 text-gray-200">BPCL</td>
+                  <td class="text-right">1,32,418</td><td class="text-right">7.8×</td><td class="text-right">4.9×</td><td class="text-right">17.2%</td><td class="text-right text-emerald-300">+9.1%</td>
+                  <td class="text-right px-4 text-red-300">-72% on EV/EBITDA</td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-3 text-gray-200">IOC</td>
+                  <td class="text-right">1,89,247</td><td class="text-right">9.2×</td><td class="text-right">5.4×</td><td class="text-right">14.1%</td><td class="text-right text-emerald-300">+7.3%</td>
+                  <td class="text-right px-4 text-red-300">-70%</td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-3 text-gray-200">DMART (Retail comp)</td>
+                  <td class="text-right">2,84,510</td><td class="text-right">86.4×</td><td class="text-right">58.2×</td><td class="text-right">21.8%</td><td class="text-right text-emerald-300">+18.4%</td>
+                  <td class="text-right px-4 text-emerald-300">+212% premium</td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-3 text-gray-200">BHARTIARTL (Telecom comp)</td>
+                  <td class="text-right">7,93,250</td><td class="text-right">62.1×</td><td class="text-right">11.3×</td><td class="text-right">12.6%</td><td class="text-right text-emerald-300">+19.2%</td>
+                  <td class="text-right px-4 text-emerald-300">+118% on P/E</td>
+                </tr>
+                <tr class="hover:bg-gray-800/30">
+                  <td class="px-4 py-3 text-gray-200">ADANIENT</td>
+                  <td class="text-right">3,71,810</td><td class="text-right">94.7×</td><td class="text-right">26.2×</td><td class="text-right">9.4%</td><td class="text-right text-emerald-300">+22.1%</td>
+                  <td class="text-right px-4 text-emerald-300">+233%</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="p-4 border-t border-gray-800 text-xs text-gray-400 leading-relaxed">
+              <div class="text-[11px] uppercase tracking-wider text-indigo-300 mb-1">Relative Valuation — AI Synthesis</div>
+              RELIANCE trades at a justified premium to PSU refiners (BPCL/IOC) given retail + telecom optionality, but at a meaningful discount to pure-play retail (DMART) and telecom (Bharti) on segment SOTP. Implied SOTP fair value works to <span class="text-emerald-300 mono">₹3,180 / share</span> using FY28E segment multiples — ~8% upside to current.
+            </div>
+          </div>
+        </div>
+
+        <!-- INDUSTRY PANE -->
+        <div class="agent-pane px-6 py-5 hidden" data-group="agents" data-id="industry">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-5">
+              <div class="text-[11px] uppercase tracking-wider text-indigo-300 mb-1">TAM · India Refining + Retail + Telecom</div>
+              <div class="mono text-3xl font-bold">$642 Bn</div>
+              <div class="text-xs text-gray-500 mt-1">Blended addressable market FY26</div>
+              <div class="h-px bg-gray-800 my-4"></div>
+              <div class="text-[11px] uppercase tracking-wider text-gray-500 mb-1">5Y Forward CAGR</div>
+              <div class="mono text-xl text-emerald-300 font-semibold">+9.4%</div>
+              <div class="text-xs text-gray-500">FY26 → FY31 blended</div>
+            </div>
+
+            <div class="lg:col-span-2 rounded-xl border border-gray-800 bg-[#111827] p-5">
+              <div class="flex items-center gap-2 mb-3"><i data-lucide="zap" class="w-4 h-4 text-amber-300"></i><h3 class="text-sm font-semibold">Structural Themes</h3></div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                <div class="border border-gray-800 rounded-lg p-3"><div class="text-xs text-emerald-300 font-semibold mb-1">Premiumisation in retail</div><div class="text-gray-300 text-[13px]">Top-tier ASP rising 12% YoY · margin tailwind for organised players with private labels.</div></div>
+                <div class="border border-gray-800 rounded-lg p-3"><div class="text-xs text-emerald-300 font-semibold mb-1">Telecom consolidation</div><div class="text-gray-300 text-[13px]">3-player oligopoly · ARPU expansion phase post-VIL stress.</div></div>
+                <div class="border border-gray-800 rounded-lg p-3"><div class="text-xs text-amber-300 font-semibold mb-1">Energy transition</div><div class="text-gray-300 text-[13px]">$200B+ government push on green H2 / solar manufacturing through PLI.</div></div>
+                <div class="border border-gray-800 rounded-lg p-3"><div class="text-xs text-red-300 font-semibold mb-1">Petrochemical glut</div><div class="text-gray-300 text-[13px]">China new-capacity overhang likely to keep PE/PP spreads weak through FY27.</div></div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-3 rounded-xl border border-gray-800 bg-[#111827] p-5">
+              <div class="flex items-center gap-2 mb-3"><i data-lucide="gavel" class="w-4 h-4 text-purple-300"></i><h3 class="text-sm font-semibold">Regulatory Outlook</h3></div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                <div class="flex gap-2 items-start"><span class="chip severity-low mt-0.5">LOW</span><span class="text-gray-300 text-[13px]">FDI cap relaxation in retail multi-brand expected H2 FY27</span></div>
+                <div class="flex gap-2 items-start"><span class="chip severity-med mt-0.5">MED</span><span class="text-gray-300 text-[13px]">Spectrum re-pricing for 700/800 MHz bands by TRAI in FY28</span></div>
+                <div class="flex gap-2 items-start"><span class="chip severity-high mt-0.5">HIGH</span><span class="text-gray-300 text-[13px]">Windfall tax framework revision pending — direct impact on refining cash flows</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRE-CALL PACK PANE -->
+        <div class="agent-pane px-6 py-5 hidden" data-group="agents" data-id="precall">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div class="lg:col-span-2 rounded-xl border border-gray-800 bg-[#111827] p-5">
+              <div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><i data-lucide="clipboard-check" class="w-4 h-4 text-indigo-300"></i><h3 class="text-sm font-semibold">Pre-Call Preparation · Q1 FY27</h3></div><span class="chip bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">Call: 18 Jul 2026 · 5:30 PM IST</span></div>
+              <div class="text-[11px] uppercase tracking-wider text-gray-500 mb-2">Suggested Question Areas</div>
+              <div class="space-y-2 text-sm">
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/30"><div class="text-gray-200 text-[13px]"><span class="text-indigo-300 font-semibold">1.</span> What is the trajectory for Jio ARPU post the May tariff hike — pricing power vs churn risk?</div></div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/30"><div class="text-gray-200 text-[13px]"><span class="text-indigo-300 font-semibold">2.</span> Retail SSSG was flat in Q4 — does management see this as a reset to a lower growth regime?</div></div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/30"><div class="text-gray-200 text-[13px]"><span class="text-indigo-300 font-semibold">3.</span> Green H2 capex — what are the unit economics at &lt;$2.5/kg landed cost?</div></div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/30"><div class="text-gray-200 text-[13px]"><span class="text-indigo-300 font-semibold">4.</span> Reliance Retail demerger / IPO timeline — what's the trigger for activation?</div></div>
+                <div class="border border-gray-800 rounded-lg p-3 bg-gray-900/30"><div class="text-gray-200 text-[13px]"><span class="text-indigo-300 font-semibold">5.</span> O2C — guidance on petchem margins given China capacity additions?</div></div>
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-5">
+              <div class="flex items-center gap-2 mb-3"><i data-lucide="target" class="w-4 h-4 text-emerald-300"></i><h3 class="text-sm font-semibold">Consensus Estimates · Q1 FY27</h3></div>
+              <div class="space-y-3 text-sm">
+                <div><div class="flex justify-between"><span class="text-gray-400">Revenue (₹ Cr)</span><span class="mono text-gray-200">2,48,420</span></div><div class="text-[11px] text-gray-500 mt-0.5">Range 2,38k – 2,61k · n=22</div></div>
+                <div><div class="flex justify-between"><span class="text-gray-400">EBITDA (₹ Cr)</span><span class="mono text-gray-200">42,108</span></div><div class="text-[11px] text-gray-500 mt-0.5">Margin 17.0% · ±60 bps</div></div>
+                <div><div class="flex justify-between"><span class="text-gray-400">PAT (₹ Cr)</span><span class="mono text-gray-200">18,790</span></div><div class="text-[11px] text-gray-500 mt-0.5">EPS ₹27.80</div></div>
+                <div><div class="flex justify-between"><span class="text-gray-400">Jio ARPU</span><span class="mono text-gray-200">₹219</span></div></div>
+                <div><div class="flex justify-between"><span class="text-gray-400">Retail Rev YoY</span><span class="mono text-emerald-300">+14%</span></div></div>
+              </div>
+              <div class="mt-4 pt-3 border-t border-gray-800 text-[11px] text-gray-500">Buy 38 · Hold 9 · Sell 2 · Target ₹3,124 (+6.5%)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANOMALIES PANE -->
+        <div class="agent-pane px-6 py-5 hidden" data-group="agents" data-id="anomalies">
+          <div class="rounded-xl border border-gray-800 bg-[#111827]">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div class="flex items-center gap-2"><i data-lucide="alert-octagon" class="w-4 h-4 text-amber-300"></i><h3 class="text-sm font-semibold">Anomaly Flags</h3><span class="chip bg-red-500/10 text-red-300 border border-red-500/30">1 high</span><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">2 med</span></div>
+              <div class="flex gap-1 text-xs">
+                <button class="px-2 py-1 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Open</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">Resolved</button>
+              </div>
+            </div>
+            <div class="divide-y divide-gray-800/60">
+              <div class="px-4 py-4">
+                <div class="flex items-start gap-3">
+                  <span class="chip severity-high">HIGH</span>
+                  <div class="flex-1">
+                    <div class="text-sm text-gray-100 font-medium">O2C revenue dropped 12.4% QoQ vs sector decline of -3.8%</div>
+                    <div class="text-[12px] text-gray-400 mt-1">Affected: <span class="mono text-gray-300">segment_revenue.o2c</span> · Period Q4 FY26 · Δ <span class="mono text-red-300">-₹16,420 Cr</span></div>
+                    <div class="text-[12px] text-gray-500 mt-1">Detected by Financial Health Screener · Confidence 92%</div>
+                  </div>
+                  <button class="text-xs border border-gray-800 rounded px-2 py-1 text-gray-300 hover:bg-gray-800">Investigate</button>
+                </div>
+              </div>
+              <div class="px-4 py-4">
+                <div class="flex items-start gap-3">
+                  <span class="chip severity-med">MED</span>
+                  <div class="flex-1">
+                    <div class="text-sm text-gray-100 font-medium">Working capital days expanded from 24 → 31 (+29%)</div>
+                    <div class="text-[12px] text-gray-400 mt-1">Affected: <span class="mono text-gray-300">working_capital_days</span> · Period Q4 FY26 · Δ <span class="mono text-amber-300">+7 days</span></div>
+                    <div class="text-[12px] text-gray-500 mt-1">Likely cause: inventory build-up in Retail division ahead of festive season</div>
+                  </div>
+                  <button class="text-xs border border-gray-800 rounded px-2 py-1 text-gray-300 hover:bg-gray-800">Investigate</button>
+                </div>
+              </div>
+              <div class="px-4 py-4">
+                <div class="flex items-start gap-3">
+                  <span class="chip severity-med">MED</span>
+                  <div class="flex-1">
+                    <div class="text-sm text-gray-100 font-medium">Other Income spike +₹2,140 Cr unattributed</div>
+                    <div class="text-[12px] text-gray-400 mt-1">Affected: <span class="mono text-gray-300">other_income</span> · Period Q4 FY26 · Δ <span class="mono text-amber-300">+38%</span></div>
+                    <div class="text-[12px] text-gray-500 mt-1">No matching disclosure in notes · awaiting management commentary</div>
+                  </div>
+                  <button class="text-xs border border-gray-800 rounded px-2 py-1 text-gray-300 hover:bg-gray-800">Investigate</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESEARCH CYCLES PANE -->
+        <div class="agent-pane px-6 py-5 hidden" data-group="agents" data-id="cycles">
+          <div class="space-y-4">
+            <div class="rounded-xl border border-indigo-500/40 bg-gradient-to-r from-indigo-500/5 to-transparent p-5">
+              <div class="flex items-start justify-between mb-3">
+                <div><div class="text-xs text-indigo-300 font-semibold mb-1">ACTIVE CYCLE</div><div class="text-base font-semibold">FY27 Q1 — Pre-results research</div><div class="text-[12px] text-gray-400 mt-0.5">Opened 28 May 2026 by Rajesh Bejadi · 3 questions open</div></div>
+                <button class="text-xs bg-indigo-600 hover:bg-indigo-500 rounded-lg px-3 py-1.5 text-white">Add Question</button>
+              </div>
+              <div class="space-y-2">
+                <details class="border border-gray-800 rounded-lg bg-gray-900/40">
+                  <summary class="px-3 py-2 flex items-center justify-between text-sm"><span class="flex items-center gap-2"><i data-lucide="message-circle-question" class="w-3.5 h-3.5 text-indigo-300"></i><span class="text-gray-200">Is the Jio ARPU expansion durable post the tariff hike?</span></span><i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-500"></i></summary>
+                  <div class="px-3 pb-3 pt-1 text-[13px] text-gray-300 leading-relaxed border-t border-gray-800/60">AI synthesis suggests ARPU expansion is structurally durable. Historical pricing analysis shows churn elasticity of -0.42 (low). 5G upsell mix improved to 38% of postpaid base. Trail 4Q ARPU CAGR of 9.2% should sustain at ~7-8% through FY27 even without further tariff action…</div>
+                </details>
+                <details class="border border-gray-800 rounded-lg bg-gray-900/40">
+                  <summary class="px-3 py-2 flex items-center justify-between text-sm"><span class="flex items-center gap-2"><i data-lucide="message-circle-question" class="w-3.5 h-3.5 text-indigo-300"></i><span class="text-gray-200">Retail SSSG — temporary slowdown or structural reset?</span></span><i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-500"></i></summary>
+                </details>
+                <details class="border border-gray-800 rounded-lg bg-gray-900/40">
+                  <summary class="px-3 py-2 flex items-center justify-between text-sm"><span class="flex items-center gap-2"><i data-lucide="message-circle-question" class="w-3.5 h-3.5 text-indigo-300"></i><span class="text-gray-200">Green H2 — when does it become P&amp;L accretive?</span></span><i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-500"></i></summary>
+                </details>
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-4">
+              <div class="flex items-start justify-between mb-2"><div><div class="text-xs text-gray-500 font-semibold mb-1">CLOSED CYCLE</div><div class="text-sm font-semibold">FY26 Annual — Conviction review</div><div class="text-[12px] text-gray-400 mt-0.5">12 questions · closed 14 May 2026</div></div><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Closed</span></div>
+            </div>
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-4">
+              <div class="flex items-start justify-between mb-2"><div><div class="text-xs text-gray-500 font-semibold mb-1">CLOSED CYCLE</div><div class="text-sm font-semibold">FY26 Q3 — Quarterly check-in</div><div class="text-[12px] text-gray-400 mt-0.5">7 questions · closed 02 Feb 2026</div></div><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Closed</span></div>
+            </div>
+            <div class="rounded-xl border border-gray-800 bg-[#111827] p-4">
+              <div class="flex items-start justify-between"><div><div class="text-xs text-gray-500 font-semibold mb-1">CLOSED CYCLE</div><div class="text-sm font-semibold">FY26 Q2 — Initial coverage</div><div class="text-[12px] text-gray-400 mt-0.5">15 questions · closed 08 Nov 2025</div></div><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Closed</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ MARKET DATA ============================ -->
+      <section id="section-market-data" class="section">
+        <div class="px-6 py-5 border-b border-gray-800 flex items-end justify-between flex-wrap gap-3">
+          <div>
+            <h1 class="text-xl font-bold">Market Data</h1>
+            <p class="text-sm text-gray-400">Sector performance · macro trends · news firehose</p>
+          </div>
+          <div class="flex items-center gap-2 mono text-xs">
+            <button class="px-2.5 py-1.5 rounded border border-gray-800 hover:bg-gray-800">1D</button>
+            <button class="px-2.5 py-1.5 rounded border border-indigo-500/40 bg-indigo-500/10 text-indigo-200">5D</button>
+            <button class="px-2.5 py-1.5 rounded border border-gray-800 hover:bg-gray-800">1M</button>
+            <button class="px-2.5 py-1.5 rounded border border-gray-800 hover:bg-gray-800">3M</button>
+            <button class="px-2.5 py-1.5 rounded border border-gray-800 hover:bg-gray-800">1Y</button>
+            <button class="px-2.5 py-1.5 rounded border border-gray-800 hover:bg-gray-800">5Y</button>
+          </div>
+        </div>
+
+        <div class="px-6 py-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <!-- Nifty chart -->
+          <div class="lg:col-span-2 rounded-xl border border-gray-800 bg-[#111827] p-5">
+            <div class="flex items-center justify-between mb-3">
+              <div><div class="text-sm font-semibold">NIFTY 50 · Last 5 Sessions</div><div class="mono text-2xl font-bold text-emerald-300 mt-0.5">23,847.50 <span class="text-sm">+148.20 (+0.62%)</span></div></div>
+              <div class="text-xs text-gray-500">As of 14:32 IST</div>
+            </div>
+            <svg viewBox="0 0 600 180" class="w-full h-44">
+              <defs><linearGradient id="ng" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#34d399" stop-opacity="0.35"/><stop offset="100%" stop-color="#34d399" stop-opacity="0"/></linearGradient></defs>
+              <g stroke="#1f2937" stroke-width="0.5">
+                <line x1="0" y1="30" x2="600" y2="30"/><line x1="0" y1="70" x2="600" y2="70"/><line x1="0" y1="110" x2="600" y2="110"/><line x1="0" y1="150" x2="600" y2="150"/>
+              </g>
+              <path d="M0,120 L60,108 L120,115 L180,90 L240,95 L300,72 L360,80 L420,55 L480,60 L540,40 L600,32" fill="none" stroke="#34d399" stroke-width="2"/>
+              <path d="M0,120 L60,108 L120,115 L180,90 L240,95 L300,72 L360,80 L420,55 L480,60 L540,40 L600,32 L600,180 L0,180 Z" fill="url(#ng)"/>
+            </svg>
+            <div class="flex justify-between mono text-[10px] text-gray-500 mt-1"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span></div>
+          </div>
+
+          <!-- Sector heatmap -->
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-5">
+            <div class="text-sm font-semibold mb-3">Sector Performance · Today</div>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center gap-2"><span class="w-28 text-gray-400">IT Services</span><div class="flex-1 h-5 bg-gray-800 rounded overflow-hidden relative"><div class="bg-emerald-500/40 h-full" style="width:78%"></div><span class="absolute inset-0 flex items-center pl-2 mono text-emerald-200">+2.14%</span></div></div>
+              <div class="flex items-center gap-2"><span class="w-28 text-gray-400">Energy</span><div class="flex-1 h-5 bg-gray-800 rounded overflow-hidden relative"><div class="bg-emerald-500/40 h-full" style="width:62%"></div><span class="absolute inset-0 flex items-center pl-2 mono text-emerald-200">+1.68%</span></div></div>
+              <div class="flex items-center gap-2"><span class="w-28 text-gray-400">FMCG</span><div class="flex-1 h-5 bg-gray-800 rounded overflow-hidden relative"><div class="bg-emerald-500/40 h-full" style="width:42%"></div><span class="absolute inset-0 flex items-center pl-2 mono text-emerald-200">+1.04%</span></div></div>
+              <div class="flex items-center gap-2"><span class="w-28 text-gray-400">Auto</span><div class="flex-1 h-5 bg-gray-800 rounded overflow-hidden relative"><div class="bg-emerald-500/40 h-full" style="width:28%"></div><span class="absolute inset-0 flex items-center pl-2 mono text-emerald-200">+0.62%</span></div></div>
+              <div class="flex items-center gap-2"><span class="w-28 text-gray-400">Pharma</span><div class="flex-1 h-5 bg-gray-800 rounded overflow-hidden relative"><div class="bg-gray-600/40 h-full" style="width:14%"></div><span class="absolute inset-0 flex items-center pl-2 mono text-gray-300">+0.12%</span></div></div>
+              <div class="flex items-center gap-2"><span class="w-28 text-gray-400">PSU Bank</span><div class="flex-1 h-5 bg-gray-800 rounded overflow-hidden relative"><div class="bg-red-500/40 h-full" style="width:24%"></div><span class="absolute inset-0 flex items-center pl-2 mono text-red-200">-0.58%</span></div></div>
+              <div class="flex items-center gap-2"><span class="w-28 text-gray-400">Private Bank</span><div class="flex-1 h-5 bg-gray-800 rounded overflow-hidden relative"><div class="bg-red-500/40 h-full" style="width:34%"></div><span class="absolute inset-0 flex items-center pl-2 mono text-red-200">-0.82%</span></div></div>
+              <div class="flex items-center gap-2"><span class="w-28 text-gray-400">Realty</span><div class="flex-1 h-5 bg-gray-800 rounded overflow-hidden relative"><div class="bg-red-500/40 h-full" style="width:48%"></div><span class="absolute inset-0 flex items-center pl-2 mono text-red-200">-1.21%</span></div></div>
+              <div class="flex items-center gap-2"><span class="w-28 text-gray-400">Metals</span><div class="flex-1 h-5 bg-gray-800 rounded overflow-hidden relative"><div class="bg-red-500/40 h-full" style="width:64%"></div><span class="absolute inset-0 flex items-center pl-2 mono text-red-200">-1.94%</span></div></div>
+            </div>
+          </div>
+
+          <!-- Top gainers -->
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-5">
+            <div class="flex items-center gap-2 mb-3"><i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i><div class="text-sm font-semibold">Top Gainers · Nifty 500</div></div>
+            <div class="space-y-1.5 text-sm mono">
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>PERSISTENT</span><span class="text-emerald-300">+6.84%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>LTIM</span><span class="text-emerald-300">+5.42%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>MPHASIS</span><span class="text-emerald-300">+4.98%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>COFORGE</span><span class="text-emerald-300">+4.21%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>POWERGRID</span><span class="text-emerald-300">+3.84%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>NTPC</span><span class="text-emerald-300">+3.42%</span></div>
+            </div>
+          </div>
+
+          <!-- Top losers -->
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-5">
+            <div class="flex items-center gap-2 mb-3"><i data-lucide="trending-down" class="w-4 h-4 text-red-400"></i><div class="text-sm font-semibold">Top Losers · Nifty 500</div></div>
+            <div class="space-y-1.5 text-sm mono">
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>JSWSTEEL</span><span class="text-red-300">-4.21%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>HINDALCO</span><span class="text-red-300">-3.62%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>TATASTEEL</span><span class="text-red-300">-3.18%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>DLF</span><span class="text-red-300">-2.94%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>VEDL</span><span class="text-red-300">-2.62%</span></div>
+              <div class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-800/40"><span>SBIN</span><span class="text-red-300">-2.18%</span></div>
+            </div>
+          </div>
+
+          <!-- Macro trends -->
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-5">
+            <div class="flex items-center gap-2 mb-3"><i data-lucide="globe-2" class="w-4 h-4 text-indigo-400"></i><div class="text-sm font-semibold">Macro Indicators</div></div>
+            <div class="space-y-3 text-sm">
+              <div class="flex items-center justify-between"><span class="text-gray-400">FII Net Flow · MTD</span><span class="mono text-red-300">-₹12,420 Cr</span></div>
+              <div class="flex items-center justify-between"><span class="text-gray-400">DII Net Flow · MTD</span><span class="mono text-emerald-300">+₹18,950 Cr</span></div>
+              <div class="flex items-center justify-between"><span class="text-gray-400">India VIX</span><span class="mono">14.82 <span class="text-emerald-300 text-[11px]">-0.42</span></span></div>
+              <div class="flex items-center justify-between"><span class="text-gray-400">Forex Reserves</span><span class="mono">$682.4 Bn</span></div>
+              <div class="flex items-center justify-between"><span class="text-gray-400">Manuf. PMI</span><span class="mono text-emerald-300">58.7</span></div>
+              <div class="flex items-center justify-between"><span class="text-gray-400">Services PMI</span><span class="mono text-emerald-300">61.2</span></div>
+              <div class="flex items-center justify-between"><span class="text-gray-400">GST Collections · May</span><span class="mono">₹1.86 L Cr</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- News firehose -->
+        <div class="px-6 pb-6">
+          <div class="rounded-xl border border-gray-800 bg-[#111827]">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div class="flex items-center gap-2"><i data-lucide="newspaper" class="w-4 h-4 text-indigo-400"></i><h3 class="text-sm font-semibold">News Firehose</h3></div>
+              <div class="flex gap-1 text-xs">
+                <button class="px-2 py-1 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">All</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">ET</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">Mint</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">BS</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">MC</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">Bloomberg</button>
+              </div>
+            </div>
+            <div class="divide-y divide-gray-800/60">
+              <div class="px-4 py-2.5 flex items-center gap-3"><span class="mono text-[10px] text-gray-500 w-12">14:28</span><span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">ET</span><span class="text-sm text-gray-200 flex-1">Foreign brokerages turn cautious on Indian equities as valuations stretch above 5Y avg</span><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Macro</span></div>
+              <div class="px-4 py-2.5 flex items-center gap-3"><span class="mono text-[10px] text-gray-500 w-12">14:12</span><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">MINT</span><span class="text-sm text-gray-200 flex-1">SEBI revises mutual fund expense ratio cap; impact on AMC margins muted, says ICRA</span><span class="chip bg-purple-500/10 text-purple-300 border border-purple-500/30">Regulation</span></div>
+              <div class="px-4 py-2.5 flex items-center gap-3"><span class="mono text-[10px] text-gray-500 w-12">13:58</span><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">BS</span><span class="text-sm text-gray-200 flex-1">India services PMI hits 9-month high of 61.2, signals continued domestic demand strength</span><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Positive</span></div>
+              <div class="px-4 py-2.5 flex items-center gap-3"><span class="mono text-[10px] text-gray-500 w-12">13:44</span><span class="chip bg-rose-500/10 text-rose-300 border border-rose-500/30">MC</span><span class="text-sm text-gray-200 flex-1">Metals stocks tumble after China steel export curbs; JSW Steel, Tata Steel down 3-4%</span><span class="chip bg-red-500/10 text-red-300 border border-red-500/30">Negative</span></div>
+              <div class="px-4 py-2.5 flex items-center gap-3"><span class="mono text-[10px] text-gray-500 w-12">13:22</span><span class="chip bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">BLBG</span><span class="text-sm text-gray-200 flex-1">RBI signals openness to Op-Twist as G-sec yield curve flattens; bond traders cheer</span><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Positive</span></div>
+              <div class="px-4 py-2.5 flex items-center gap-3"><span class="mono text-[10px] text-gray-500 w-12">13:04</span><span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">ET</span><span class="text-sm text-gray-200 flex-1">Adani Group plans ₹2.3 L Cr capex over next 5 years across green energy, ports, cement</span><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Capex</span></div>
+              <div class="px-4 py-2.5 flex items-center gap-3"><span class="mono text-[10px] text-gray-500 w-12">12:48</span><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">MINT</span><span class="text-sm text-gray-200 flex-1">Maruti Suzuki May wholesales decline 4.6% YoY; export momentum offsets domestic weakness</span><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Mixed</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ CONCALLS ============================ -->
+      <section id="section-concalls" class="section">
+        <div class="px-6 py-5 border-b border-gray-800 flex items-end justify-between flex-wrap gap-3">
+          <div>
+            <h1 class="text-xl font-bold">Concalls &amp; Filings</h1>
+            <p class="text-sm text-gray-400">2,841 concall PDFs · 18,420 BSE filings · auto-transcribed</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="text-xs border border-gray-800 rounded-lg px-3 py-2 hover:bg-gray-800/60 flex items-center gap-1.5"><i data-lucide="filter" class="w-3.5 h-3.5"></i> Filter</button>
+            <button class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-3 py-2 flex items-center gap-1.5"><i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload PDF</button>
+          </div>
+        </div>
+
+        <div class="px-6 py-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <!-- Filings list (left) -->
+          <div class="lg:col-span-2 rounded-xl border border-gray-800 bg-[#111827]">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div class="flex items-center gap-2"><i data-lucide="folder-open" class="w-4 h-4 text-indigo-400"></i><h3 class="text-sm font-semibold">Recent Filings · Q4 FY26 Season</h3></div>
+              <div class="flex gap-1 text-xs">
+                <button class="px-2 py-1 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">All</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">Concalls</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">Results</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">Annual</button>
+              </div>
+            </div>
+            <table class="w-full text-sm">
+              <thead class="text-[10px] uppercase tracking-wider text-gray-500 border-b border-gray-800 bg-[#0d1220]">
+                <tr><th class="text-left px-4 py-2 font-medium">Date</th><th class="text-left py-2 font-medium">Company</th><th class="text-left py-2 font-medium">Type</th><th class="text-left py-2 font-medium">Title</th><th class="text-left py-2 font-medium">Pages</th><th class="text-right px-4 py-2 font-medium">Status</th></tr>
+              </thead>
+              <tbody class="mono">
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 text-gray-400">02 Jun</td><td class="py-3 text-gray-200">RELIANCE</td><td class="py-3"><span class="chip bg-purple-500/10 text-purple-300 border border-purple-500/30">Concall</span></td><td class="py-3 text-gray-300 text-[13px]">Q4 FY26 Earnings Call Transcript</td><td class="py-3 text-gray-400">28</td><td class="px-4 py-3 text-right"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Parsed</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 text-gray-400">31 May</td><td class="py-3 text-gray-200">TCS</td><td class="py-3"><span class="chip bg-purple-500/10 text-purple-300 border border-purple-500/30">Concall</span></td><td class="py-3 text-gray-300 text-[13px]">Q4 FY26 Investor Call</td><td class="py-3 text-gray-400">22</td><td class="px-4 py-3 text-right"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Parsed</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 text-gray-400">29 May</td><td class="py-3 text-gray-200">HDFCBANK</td><td class="py-3"><span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">Result</span></td><td class="py-3 text-gray-300 text-[13px]">Audited Standalone &amp; Consolidated Q4 FY26</td><td class="py-3 text-gray-400">64</td><td class="px-4 py-3 text-right"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Parsed</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 text-gray-400">28 May</td><td class="py-3 text-gray-200">INFY</td><td class="py-3"><span class="chip bg-purple-500/10 text-purple-300 border border-purple-500/30">Concall</span></td><td class="py-3 text-gray-300 text-[13px]">Q4 FY26 Earnings Call · FY27 Guidance</td><td class="py-3 text-gray-400">32</td><td class="px-4 py-3 text-right"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Parsed</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 text-gray-400">26 May</td><td class="py-3 text-gray-200">ICICIBANK</td><td class="py-3"><span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">Result</span></td><td class="py-3 text-gray-300 text-[13px]">Q4 FY26 Financial Results</td><td class="py-3 text-gray-400">48</td><td class="px-4 py-3 text-right"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Parsed</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 text-gray-400">24 May</td><td class="py-3 text-gray-200">HINDUNILVR</td><td class="py-3"><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Annual</span></td><td class="py-3 text-gray-300 text-[13px]">FY26 Annual Report</td><td class="py-3 text-gray-400">312</td><td class="px-4 py-3 text-right"><span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">Parsing 64%</span></td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 text-gray-400">22 May</td><td class="py-3 text-gray-200">BHARTIARTL</td><td class="py-3"><span class="chip bg-purple-500/10 text-purple-300 border border-purple-500/30">Concall</span></td><td class="py-3 text-gray-300 text-[13px]">Q4 FY26 Earnings Call</td><td class="py-3 text-gray-400">26</td><td class="px-4 py-3 text-right"><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Parsed</span></td>
+                </tr>
+                <tr class="hover:bg-gray-800/30 cursor-pointer">
+                  <td class="px-4 py-3 text-gray-400">20 May</td><td class="py-3 text-gray-200">SBIN</td><td class="py-3"><span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">Result</span></td><td class="py-3 text-gray-300 text-[13px]">Q4 FY26 Results &amp; Asset Quality</td><td class="py-3 text-gray-400">82</td><td class="px-4 py-3 text-right"><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Re-parse</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Transcript preview -->
+          <div class="rounded-xl border border-gray-800 bg-[#111827] flex flex-col">
+            <div class="px-4 py-3 border-b border-gray-800">
+              <div class="text-[10px] text-indigo-300 font-semibold uppercase tracking-wider">Selected · Transcript</div>
+              <div class="text-sm font-semibold mt-1">RELIANCE · Q4 FY26 Concall</div>
+              <div class="text-[11px] text-gray-500 mt-0.5">02 Jun 2026 · 28 pages · 6,420 words</div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 space-y-3 text-[13px] leading-relaxed text-gray-300">
+              <div class="border-l-2 border-indigo-500/50 pl-3">
+                <div class="text-[11px] text-indigo-300 font-semibold mb-0.5">MUKESH AMBANI · MD &amp; Chairman</div>
+                <p>"FY26 has been a defining year for Reliance — Jio crossed 480 million subscribers, our retail business compounded at 17% over three years, and our new energy investments are now operational ahead of schedule…"</p>
+              </div>
+              <div class="border-l-2 border-purple-500/50 pl-3">
+                <div class="text-[11px] text-purple-300 font-semibold mb-0.5">V MANOJ · Group CFO</div>
+                <p>"Our consolidated EBITDA grew 11.2% YoY to ₹1.74 L Cr, with O2C contributing 38%, Retail 24%, Jio 28%, and others 10%. Net debt declined to ₹2.04 L Cr — well below our ceiling of ₹2.5 L Cr…"</p>
+              </div>
+              <div class="border-l-2 border-emerald-500/50 pl-3">
+                <div class="text-[11px] text-emerald-300 font-semibold mb-0.5">ANALYST Q&amp;A · Macquarie</div>
+                <p>"Could you walk us through the unit economics of the green H2 project once Jamnagar phase-1 is fully commissioned?"</p>
+              </div>
+              <div class="border-l-2 border-purple-500/50 pl-3">
+                <div class="text-[11px] text-purple-300 font-semibold mb-0.5">V MANOJ · Group CFO</div>
+                <p>"At target scale of 100 ktpa, landed cost works to roughly $2.4/kg — competitive with grey H2 at current Brent. Capex intensity is ₹14,200 Cr per phase…"</p>
+              </div>
+            </div>
+            <div class="px-4 py-2 border-t border-gray-800 flex items-center justify-between">
+              <button class="text-xs text-indigo-300 hover:underline">Open full transcript</button>
+              <button class="text-xs text-gray-500 hover:text-gray-300">Download PDF</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ DATA HEALTH ============================ -->
+      <section id="section-data-health" class="section">
+        <div class="px-6 py-5 border-b border-gray-800 flex items-end justify-between flex-wrap gap-3">
+          <div>
+            <h1 class="text-xl font-bold flex items-center gap-2">Data Health <span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> 2 incidents</span></h1>
+            <p class="text-sm text-gray-400">Pipeline status · ingestion lag · global anomaly queue</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="text-xs border border-gray-800 rounded-lg px-3 py-2 hover:bg-gray-800/60 flex items-center gap-1.5"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh</button>
+            <button class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-3 py-2 flex items-center gap-1.5"><i data-lucide="play" class="w-3.5 h-3.5"></i> Re-run Failed</button>
+          </div>
+        </div>
+
+        <!-- Pipeline status grid -->
+        <div class="px-6 py-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-4">
+            <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center"><i data-lucide="newspaper" class="w-4 h-4 text-emerald-300"></i></div><div><div class="text-sm font-semibold">News Ingestion</div><div class="text-[11px] text-gray-500">Daily partitions · symbol tagging</div></div></div><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Healthy</span></div>
+            <div class="grid grid-cols-3 gap-2 mt-3 text-xs">
+              <div><div class="text-gray-500 text-[10px]">Lag</div><div class="mono">2.4 min</div></div>
+              <div><div class="text-gray-500 text-[10px]">Throughput</div><div class="mono">184 / hr</div></div>
+              <div><div class="text-gray-500 text-[10px]">Success</div><div class="mono text-emerald-300">99.8%</div></div>
+            </div>
+            <svg viewBox="0 0 200 28" class="w-full h-7 mt-3"><polyline fill="none" stroke="#34d399" stroke-width="1.2" points="0,18 20,15 40,18 60,12 80,14 100,10 120,11 140,8 160,12 180,9 200,7"/></svg>
+          </div>
+
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-4">
+            <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 text-emerald-300"></i></div><div><div class="text-sm font-semibold">BSE Shareholding XBRL</div><div class="text-[11px] text-gray-500">Bulk processing fallback</div></div></div><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Healthy</span></div>
+            <div class="grid grid-cols-3 gap-2 mt-3 text-xs">
+              <div><div class="text-gray-500 text-[10px]">Lag</div><div class="mono">14 min</div></div>
+              <div><div class="text-gray-500 text-[10px]">Files / day</div><div class="mono">2,114</div></div>
+              <div><div class="text-gray-500 text-[10px]">Success</div><div class="mono text-emerald-300">99.4%</div></div>
+            </div>
+            <svg viewBox="0 0 200 28" class="w-full h-7 mt-3"><polyline fill="none" stroke="#34d399" stroke-width="1.2" points="0,14 20,12 40,16 60,11 80,13 100,9 120,10 140,7 160,11 180,8 200,9"/></svg>
+          </div>
+
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-4">
+            <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center"><i data-lucide="building-bank" class="w-4 h-4 text-amber-300"></i></div><div><div class="text-sm font-semibold">Corporate Governance</div><div class="text-[11px] text-gray-500">Median-of-3 consensus</div></div></div><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">Degraded</span></div>
+            <div class="grid grid-cols-3 gap-2 mt-3 text-xs">
+              <div><div class="text-gray-500 text-[10px]">Lag</div><div class="mono text-amber-300">42 min</div></div>
+              <div><div class="text-gray-500 text-[10px]">Backlog</div><div class="mono text-amber-300">38</div></div>
+              <div><div class="text-gray-500 text-[10px]">Success</div><div class="mono">94.2%</div></div>
+            </div>
+            <svg viewBox="0 0 200 28" class="w-full h-7 mt-3"><polyline fill="none" stroke="#fbbf24" stroke-width="1.2" points="0,12 20,14 40,11 60,15 80,10 100,18 120,14 140,20 160,16 180,22 200,18"/></svg>
+          </div>
+
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-4">
+            <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-emerald-300"></i></div><div><div class="text-sm font-semibold">MOSPI Macro Feed</div><div class="text-[11px] text-gray-500">Legacy SSL adapter</div></div></div><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Healthy</span></div>
+            <div class="grid grid-cols-3 gap-2 mt-3 text-xs">
+              <div><div class="text-gray-500 text-[10px]">Lag</div><div class="mono">6 min</div></div>
+              <div><div class="text-gray-500 text-[10px]">Indicators</div><div class="mono">42</div></div>
+              <div><div class="text-gray-500 text-[10px]">Success</div><div class="mono text-emerald-300">100%</div></div>
+            </div>
+            <svg viewBox="0 0 200 28" class="w-full h-7 mt-3"><polyline fill="none" stroke="#34d399" stroke-width="1.2" points="0,15 20,13 40,14 60,11 80,12 100,10 120,11 140,8 160,9 180,7 200,8"/></svg>
+          </div>
+
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-4">
+            <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-red-500/15 flex items-center justify-center"><i data-lucide="cloud-off" class="w-4 h-4 text-red-300"></i></div><div><div class="text-sm font-semibold">Concall PDF Parser</div><div class="text-[11px] text-gray-500">OCR + speaker diarization</div></div></div><span class="chip bg-red-500/10 text-red-300 border border-red-500/30">Failing</span></div>
+            <div class="grid grid-cols-3 gap-2 mt-3 text-xs">
+              <div><div class="text-gray-500 text-[10px]">Lag</div><div class="mono text-red-300">3h 24m</div></div>
+              <div><div class="text-gray-500 text-[10px]">Backlog</div><div class="mono text-red-300">14</div></div>
+              <div><div class="text-gray-500 text-[10px]">Success</div><div class="mono text-red-300">62.1%</div></div>
+            </div>
+            <svg viewBox="0 0 200 28" class="w-full h-7 mt-3"><polyline fill="none" stroke="#f87171" stroke-width="1.2" points="0,14 20,12 40,16 60,18 80,22 100,20 120,24 140,21 160,25 180,23 200,26"/></svg>
+          </div>
+
+          <div class="rounded-xl border border-gray-800 bg-[#111827] p-4">
+            <div class="flex items-start justify-between mb-2"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center"><i data-lucide="bot" class="w-4 h-4 text-emerald-300"></i></div><div><div class="text-sm font-semibold">Agent Runtime · LangGraph</div><div class="text-[11px] text-gray-500">5 active workers</div></div></div><span class="chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Healthy</span></div>
+            <div class="grid grid-cols-3 gap-2 mt-3 text-xs">
+              <div><div class="text-gray-500 text-[10px]">Avg Latency</div><div class="mono">4.2s</div></div>
+              <div><div class="text-gray-500 text-[10px]">Runs / hr</div><div class="mono">84</div></div>
+              <div><div class="text-gray-500 text-[10px]">Success</div><div class="mono text-emerald-300">98.6%</div></div>
+            </div>
+            <svg viewBox="0 0 200 28" class="w-full h-7 mt-3"><polyline fill="none" stroke="#34d399" stroke-width="1.2" points="0,12 20,14 40,11 60,12 80,9 100,10 120,8 140,11 160,9 180,7 200,8"/></svg>
+          </div>
+        </div>
+
+        <!-- Global anomaly queue -->
+        <div class="px-6 pb-6">
+          <div class="rounded-xl border border-gray-800 bg-[#111827]">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+              <div class="flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4 text-amber-300"></i><h3 class="text-sm font-semibold">Global Anomaly Queue</h3><span class="chip bg-red-500/10 text-red-300 border border-red-500/30">23 high</span><span class="chip bg-amber-500/10 text-amber-300 border border-amber-500/30">61 med</span><span class="chip bg-blue-500/10 text-blue-300 border border-blue-500/30">142 low</span></div>
+              <div class="flex gap-1 text-xs">
+                <button class="px-2 py-1 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Unresolved</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">All</button>
+                <button class="px-2 py-1 rounded text-gray-400 hover:bg-gray-800">Suppressed</button>
+              </div>
+            </div>
+            <table class="w-full text-sm">
+              <thead class="text-[10px] uppercase tracking-wider text-gray-500 border-b border-gray-800 bg-[#0d1220]">
+                <tr><th class="text-left px-4 py-2 font-medium">Severity</th><th class="text-left py-2 font-medium">Company</th><th class="text-left py-2 font-medium">Flag Type</th><th class="text-left py-2 font-medium">Affected Line Item</th><th class="text-right py-2 font-medium">Δ</th><th class="text-left px-4 py-2 font-medium">Detected</th></tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5"><span class="chip severity-high">HIGH</span></td>
+                  <td class="py-2.5 mono text-gray-200 text-xs">INFY</td>
+                  <td class="py-2.5 text-gray-300 text-[13px]">Guidance miss</td>
+                  <td class="py-2.5 mono text-xs text-gray-400">revenue_qoq</td>
+                  <td class="py-2.5 text-right mono text-red-300">-18.2%</td>
+                  <td class="px-4 py-2.5 text-xs text-gray-500">2h ago</td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5"><span class="chip severity-high">HIGH</span></td>
+                  <td class="py-2.5 mono text-gray-200 text-xs">ZEE</td>
+                  <td class="py-2.5 text-gray-300 text-[13px]">Auditor flag</td>
+                  <td class="py-2.5 mono text-xs text-gray-400">related_party_txn</td>
+                  <td class="py-2.5 text-right mono text-red-300">+212%</td>
+                  <td class="px-4 py-2.5 text-xs text-gray-500">1d ago</td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5"><span class="chip severity-high">HIGH</span></td>
+                  <td class="py-2.5 mono text-gray-200 text-xs">RELIANCE</td>
+                  <td class="py-2.5 text-gray-300 text-[13px]">Segment divergence</td>
+                  <td class="py-2.5 mono text-xs text-gray-400">segment_revenue.o2c</td>
+                  <td class="py-2.5 text-right mono text-red-300">-12.4%</td>
+                  <td class="px-4 py-2.5 text-xs text-gray-500">1d ago</td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5"><span class="chip severity-med">MED</span></td>
+                  <td class="py-2.5 mono text-gray-200 text-xs">SBIN</td>
+                  <td class="py-2.5 text-gray-300 text-[13px]">Provisions spike</td>
+                  <td class="py-2.5 mono text-xs text-gray-400">credit_provisions</td>
+                  <td class="py-2.5 text-right mono text-amber-300">+42%</td>
+                  <td class="px-4 py-2.5 text-xs text-gray-500">5h ago</td>
+                </tr>
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5"><span class="chip severity-med">MED</span></td>
+                  <td class="py-2.5 mono text-gray-200 text-xs">BAJFIN</td>
+                  <td class="py-2.5 text-gray-300 text-[13px]">Model deviation</td>
+                  <td class="py-2.5 mono text-xs text-gray-400">loan_loss_provisions</td>
+                  <td class="py-2.5 text-right mono text-amber-300">+₹612 Cr</td>
+                  <td class="px-4 py-2.5 text-xs text-gray-500">2d ago</td>
+                </tr>
+                <tr class="hover:bg-gray-800/30">
+                  <td class="px-4 py-2.5"><span class="chip severity-low">LOW</span></td>
+                  <td class="py-2.5 mono text-gray-200 text-xs">ITC</td>
+                  <td class="py-2.5 text-gray-300 text-[13px]">Volume divergence</td>
+                  <td class="py-2.5 mono text-xs text-gray-400">cigarette_volume_growth</td>
+                  <td class="py-2.5 text-right mono">+218 bps</td>
+                  <td class="px-4 py-2.5 text-xs text-gray-500">1d ago</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-section]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = link.dataset.section;
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      link.classList.add('active');
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById('section-' + target);
+      if (el) el.classList.add('active');
+      document.getElementById('main-scroll').scrollTop = 0;
+    });
+  });
+
+  // Agent tabs (Company Detail)
+  document.addEventListener('click', (e) => {
+    const tab = e.target.closest('.agent-tab');
+    if (tab) {
+      const group = tab.dataset.group;
+      const id = tab.dataset.id;
+      document.querySelectorAll(`.agent-tab[data-group="${group}"]`).forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll(`.agent-pane[data-group="${group}"]`).forEach(p => p.classList.add('hidden'));
+      const pane = document.querySelector(`.agent-pane[data-group="${group}"][data-id="${id}"]`);
+      if (pane) pane.classList.remove('hidden');
+    }
+    const tb = e.target.closest('.tab-btn');
+    if (tb) {
+      const group = tb.dataset.group;
+      const id = tb.dataset.id;
+      document.querySelectorAll(`.tab-btn[data-group="${group}"]`).forEach(t => t.classList.remove('active'));
+      tb.classList.add('active');
+      document.querySelectorAll(`.tab-pane[data-group="${group}"]`).forEach(p => p.classList.add('hidden'));
+      const pane = document.querySelector(`.tab-pane[data-group="${group}"][data-id="${id}"]`);
+      if (pane) pane.classList.remove('hidden');
+    }
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>
