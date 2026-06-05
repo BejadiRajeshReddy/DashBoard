@@ -10,9 +10,10 @@ const esToolkitVitePlugin = () => {
   const virtualPrefix = '\0es-toolkit/compat/';
   return {
     name: 'es-toolkit-vite-resolver',
+    enforce: 'pre' as const,
     resolveId(source: string) {
       if (source.startsWith('es-toolkit/compat/')) {
-        return virtualPrefix + source.replace('es-toolkit/compat/', '');
+        return virtualPrefix + source.replace('es-toolkit/compat/', '').replace(/\.js$/, '');
       }
       return null;
     },
@@ -24,7 +25,7 @@ const esToolkitVitePlugin = () => {
           const filePath = path.resolve(__dirname, `node_modules/es-toolkit/dist/compat/${cat}/${name}.mjs`);
           if (fs.existsSync(filePath)) {
             const relativePath = filePath.split(path.sep).join('/');
-            return `export { ${name} as default } from '${relativePath}';`;
+            return `export * from '${relativePath}'; export { ${name} as default } from '${relativePath}';`;
           }
         }
       }
@@ -52,6 +53,9 @@ export default defineConfig({
         esToolkitVitePlugin()
       ]
     }
+  },
+  build: {
+    sourcemap: true
   },
   server: {
     port: 5173
