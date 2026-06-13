@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #0a0e17;
+    --panel: #111827;
+    --panel-2: #161e2e;
+    --border: #1f2937;
+    --text: #e5e7eb;
+    --text-dim: #94a3b8;
+    --accent: #6366f1;
+  }
+  html, body { background: var(--bg); color: var(--text); }
+  body { font-family: 'Inter', sans-serif; font-feature-settings: 'cv02','cv03','cv04','cv11'; }
+}
+
+@layer utilities {
+  .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+  .nav-item.active { background: rgba(99,102,241,.10); color: #a5b4fc; border-left-color: #6366f1; }
+  .nav-item { border-left: 2px solid transparent; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .tab-btn.active { background: rgba(99,102,241,.12); color: #c7d2fe; border-color: #6366f1; }
+  .agent-tab.active { background: rgba(99,102,241,.15); color:#e0e7ff; border-color: rgba(99,102,241,.5); }
+
+  .grid-bg { background-image: radial-gradient(circle at 1px 1px, #1f2937 1px, transparent 0); background-size: 24px 24px; }
+
+  .severity-high { color: #f87171; background: rgba(239,68,68,.10); border: 1px solid rgba(239,68,68,.30); }
+  .severity-med  { color: #fbbf24; background: rgba(245,158,11,.10); border: 1px solid rgba(245,158,11,.30); }
+  .severity-low  { color: #60a5fa; background: rgba(59,130,246,.10); border: 1px solid rgba(59,130,246,.30); }
+
+  .chip { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .5rem; border-radius:9999px; font-size:11px; font-weight:500; }
+
+  .marquee { animation: marquee 60s linear infinite; }
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #374151; }
+
+details summary::-webkit-details-marker { display:none; }
+details summary { cursor: pointer; list-style: none; }
+
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
